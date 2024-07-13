@@ -17,9 +17,6 @@ public partial class Book
     // жанр книги
     public int IdGenre { get; set; }
 
-    // издательство книги
-    public int IdHouse { get; set; }
-
     // возрастное ограничение книги
     public int IdAge { get; set; }
     
@@ -43,13 +40,8 @@ public partial class Book
     // настройка внешнего ключа для связи с таблицей Жанры
     public virtual Genre IdGenreNavigation { get; set; } = null!;
 
-    // настройка внешнего ключа для связи с таблицей Издательства
-    public virtual PublishingHouse IdHouseNavigation { get; set; } = null!;
-
     // настройка внешних ключей для таблиц, которые связываются с таблей Книги
-    public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
-
-    public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
+    public virtual ICollection<PubBook> PubBooks { get; set; } = new List<PubBook>();
 
     #endregion
 }

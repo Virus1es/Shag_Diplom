@@ -14,6 +14,9 @@ public partial class PublishingHouse
     // контактный номер
     public string Phone { get; set; } = null!;
 
+    // процент наценки за издательство
+    public double AddPercent { get; set; }
+
     // настройка для внешнего ключа
-    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
+    public virtual ICollection<PubBook> PubBooks { get; set; } = new List<PubBook>();
 }

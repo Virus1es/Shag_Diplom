@@ -12,7 +12,7 @@ public partial class Purchase
     public int IdProvider { get; set; }
 
     // закупленная книга
-    public int IdBook { get; set; }
+    public int IdPubBook { get; set; }
 
     // дата закупки
     public DateOnly PurchaseDate { get; set; }
@@ -25,8 +25,8 @@ public partial class Purchase
 
     #region Настройка внешних ключей
 
-    // настройка внешнего ключа для связи с таблицей Книги
-    public virtual Book IdBookNavigation { get; set; } = null!;
+    // настройка внешнего ключа для связи с таблицей Книги с издательствами
+    public virtual PubBook IdPubBookNavigation { get; set; } = null!;
 
     // настройка внешнего ключа для связи с таблицей Поставщики
     public virtual Provider IdProviderNavigation { get; set; } = null!;

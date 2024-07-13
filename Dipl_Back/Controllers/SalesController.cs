@@ -18,7 +18,7 @@ public class SalesController(BooksContext context) : Controller
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
-    public string Post([FromForm] int id, [FromForm] int IdBook, [FromForm] DateOnly SaleDate, 
+    public string Post([FromForm] int id, [FromForm] int IdPubBook, [FromForm] DateOnly SaleDate, 
                        [FromForm] int Amount, [FromForm] int SalePrice, [FromForm] int DeliverPrice)
     {
         try
@@ -27,7 +27,7 @@ public class SalesController(BooksContext context) : Controller
             {
                 // имитируем изменение данных
                 Id = id,
-                IdBook = IdBook,
+                IdPubBook = IdPubBook,
                 SaleDate = SaleDate,
                 Amount = Amount,
                 SalePrice = SalePrice,
@@ -48,7 +48,7 @@ public class SalesController(BooksContext context) : Controller
 
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
-    public string Put([FromForm] int id, [FromForm] int IdBook, [FromForm] DateOnly SaleDate,
+    public string Put([FromForm] int id, [FromForm] int IdPubBook, [FromForm] DateOnly SaleDate,
                       [FromForm] int Amount, [FromForm] int SalePrice, [FromForm] int DeliverPrice)
     {
         try
@@ -61,7 +61,7 @@ public class SalesController(BooksContext context) : Controller
             {
                 // имитируем изменение данных
                 Id = id,
-                IdBook = IdBook,
+                IdPubBook = IdPubBook,
                 SaleDate = SaleDate,
                 Amount = Amount,
                 SalePrice = SalePrice,

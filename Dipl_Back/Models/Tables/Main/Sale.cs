@@ -7,7 +7,7 @@ public partial class Sale
     public int Id { get; set; }
 
     // проданная книга
-    public int IdBook { get; set; }
+    public int IdPubBook { get; set; }
 
     // дата продажи
     public DateOnly SaleDate { get; set; }
@@ -24,8 +24,8 @@ public partial class Sale
 
     #region Настройка внешних ключей
 
-    // настройка внешнего ключа для связи с таблицей Книги
-    public virtual Book IdBookNavigation { get; set; } = null!;
+    // настройка внешнего ключа для связи с таблицей Книги с издательствами
+    public virtual PubBook IdPubBookNavigation { get; set; } = null!;
 
     #endregion
 }

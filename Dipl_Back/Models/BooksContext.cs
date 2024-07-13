@@ -19,7 +19,8 @@ public partial class BooksContext : DbContext
     {
     }
 
-    #region таблицы базы данных
+    #region Таблицы базы данных
+
     public virtual DbSet<AgeRestriction> AgeRestrictions { get; set; }
 
     public virtual DbSet<Author> Authors { get; set; }
@@ -31,6 +32,8 @@ public partial class BooksContext : DbContext
     public virtual DbSet<Genre> Genres { get; set; }
 
     public virtual DbSet<Provider> Providers { get; set; }
+
+    public virtual DbSet<PubBook> PubBooks { get; set; }
 
     public virtual DbSet<PublishingHouse> PublishingHouses { get; set; }
 
@@ -87,11 +90,6 @@ public partial class BooksContext : DbContext
                 .HasForeignKey(d => d.IdGenre)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Books_Genres");
-
-            entity.HasOne(d => d.IdHouseNavigation).WithMany(p => p.Books)
-                .HasForeignKey(d => d.IdHouse)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Books_PublishingHouses");
         });
 
         modelBuilder.Entity<City>(entity =>
@@ -116,6 +114,21 @@ public partial class BooksContext : DbContext
             entity.Property(e => e.Phone).HasMaxLength(15);
         });
 
+        modelBuilder.Entity<PubBook>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PubBooks_PK");
+
+            entity.HasOne(d => d.IdBookNavigation).WithMany(p => p.PubBooks)
+                .HasForeignKey(d => d.IdBook)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PubBooks_Books");
+
+            entity.HasOne(d => d.IdHouseNavigation).WithMany(p => p.PubBooks)
+                .HasForeignKey(d => d.IdHouse)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PubBooks_PublishingHouses");
+        });
+
         modelBuilder.Entity<PublishingHouse>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PublishingHouses_PK");
@@ -128,25 +141,25 @@ public partial class BooksContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("Purchases_PK");
 
-            entity.HasOne(d => d.IdBookNavigation).WithMany(p => p.Purchases)
-                .HasForeignKey(d => d.IdBook)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Purchases_Books");
-
             entity.HasOne(d => d.IdProviderNavigation).WithMany(p => p.Purchases)
                 .HasForeignKey(d => d.IdProvider)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Purchases_Providers");
+
+            entity.HasOne(d => d.IdPubBookNavigation).WithMany(p => p.Purchases)
+                .HasForeignKey(d => d.IdPubBook)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Purchases_PubBooks");
         });
 
         modelBuilder.Entity<Sale>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Sales_PK");
 
-            entity.HasOne(d => d.IdBookNavigation).WithMany(p => p.Sales)
-                .HasForeignKey(d => d.IdBook)
+            entity.HasOne(d => d.IdPubBookNavigation).WithMany(p => p.Sales)
+                .HasForeignKey(d => d.IdPubBook)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Sales_Books");
+                .HasConstraintName("FK_Sales_PubBooks");
         });
 
         modelBuilder.Entity<Store>(entity =>
