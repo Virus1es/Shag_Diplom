@@ -21,29 +21,29 @@ public partial class BooksContext : DbContext
 
     #region Таблицы базы данных
 
-    public virtual DbSet<AgeRestriction> AgeRestrictions { get; set; }
+    public DbSet<AgeRestriction> AgeRestrictions { get; set; }
 
-    public virtual DbSet<Author> Authors { get; set; }
+    public DbSet<Author> Authors { get; set; }
 
-    public virtual DbSet<Book> Books { get; set; }
+    public DbSet<Book> Books { get; set; }
 
-    public virtual DbSet<City> Cities { get; set; }
+    public DbSet<City> Cities { get; set; }
 
-    public virtual DbSet<Genre> Genres { get; set; }
+    public DbSet<Genre> Genres { get; set; }
 
-    public virtual DbSet<Provider> Providers { get; set; }
+    public DbSet<Provider> Providers { get; set; }
 
-    public virtual DbSet<PubBook> PubBooks { get; set; }
+    public DbSet<PubBook> PubBooks { get; set; }
 
-    public virtual DbSet<PublishingHouse> PublishingHouses { get; set; }
+    public DbSet<PublishingHouse> PublishingHouses { get; set; }
 
-    public virtual DbSet<Purchase> Purchases { get; set; }
+    public DbSet<Purchase> Purchases { get; set; }
 
-    public virtual DbSet<Sale> Sales { get; set; }
+    public DbSet<Sale> Sales { get; set; }
 
-    public virtual DbSet<Store> Stores { get; set; }
+    public DbSet<Store> Stores { get; set; }
 
-    public virtual DbSet<Street> Streets { get; set; }
+    public DbSet<Street> Streets { get; set; }
 
     #endregion
 

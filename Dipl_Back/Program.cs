@@ -11,8 +11,6 @@ builder.Services.AddControllers();
 // строку подключения определяем в appsettings.json
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-
-// TODO: !!! посмотри в appsettings.json DefaultConnection !!!
 // Scaffold-DbContext "Server=DESKTOP-N88PL21;Database=Diploming_DB;Trusted_Connection=True;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 
 builder.Services.AddDbContext<BooksContext>(

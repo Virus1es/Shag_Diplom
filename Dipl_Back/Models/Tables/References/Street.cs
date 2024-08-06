@@ -1,4 +1,5 @@
 ﻿using Dipl_Back.Models.Tables.Main;
+using System.Text.Json.Serialization;
 
 namespace Dipl_Back.Models.Tables.References;
 
@@ -12,5 +13,6 @@ public partial class Street
     public string StreetName { get; set; } = null!;
 
     // настройка для внешнего ключа
+    [JsonIgnore]
     public virtual ICollection<Store> Stores { get; set; } = new List<Store>();
 }

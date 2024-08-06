@@ -1,4 +1,5 @@
 ﻿using Dipl_Back.Models.Tables.References;
+using System.Text.Json.Serialization;
 
 namespace Dipl_Back.Models.Tables.Main;
 
@@ -41,6 +42,7 @@ public partial class Book
     public virtual Genre IdGenreNavigation { get; set; } = null!;
 
     // настройка внешних ключей для таблиц, которые связываются с таблей Книги
+    [JsonIgnore]
     public virtual ICollection<PubBook> PubBooks { get; set; } = new List<PubBook>();
 
     #endregion

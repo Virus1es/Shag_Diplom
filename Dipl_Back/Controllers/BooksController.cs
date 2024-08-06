@@ -19,7 +19,7 @@ public class BooksController(BooksContext context) : Controller
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
     public string Post([FromForm] int id, [FromForm] string Title, [FromForm] int IdAuthor,
-                       [FromForm] int IdGenre, [FromForm] int IdHouse, [FromForm] int IdAge, [FromForm] int Price, 
+                       [FromForm] int IdGenre, [FromForm] int IdAge, [FromForm] int Price, 
                        [FromForm] int CreationYear, [FromForm] double Rating)
     {
         try
@@ -52,7 +52,7 @@ public class BooksController(BooksContext context) : Controller
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
     public string Put([FromForm] int id, [FromForm] string Title, [FromForm] int IdAuthor,
-                       [FromForm] int IdGenre, [FromForm] int IdHouse, [FromForm] int IdAge, [FromForm] int Price,
+                       [FromForm] int IdGenre, [FromForm] int IdAge, [FromForm] int Price,
                        [FromForm] int CreationYear, [FromForm] double Rating)
     {
         try

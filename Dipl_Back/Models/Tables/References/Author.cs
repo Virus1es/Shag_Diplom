@@ -1,4 +1,5 @@
 ﻿using Dipl_Back.Models.Tables.Main;
+using System.Text.Json.Serialization;
 
 namespace Dipl_Back.Models.Tables.References;
 
@@ -18,5 +19,6 @@ public partial class Author
     public string? Patronymic { get; set; }
 
     // настройка внешнего ключа
+    [JsonIgnore]
     public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 }

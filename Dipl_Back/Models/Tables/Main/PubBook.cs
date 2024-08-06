@@ -1,4 +1,5 @@
 ﻿using Dipl_Back.Models.Tables.References;
+using System.Text.Json.Serialization;
 
 namespace Dipl_Back.Models.Tables.Main;
 
@@ -23,9 +24,11 @@ public partial class PubBook
     public virtual PublishingHouse IdHouseNavigation { get; set; } = null!;
 
     // настройка внешнего ключа для связи с таблицей Возрастные ограничения
+    [JsonIgnore]
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 
     // настройка внешних ключей для таблиц, которые связываются с таблей Книги с издательствами
+    [JsonIgnore]
     public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
     #endregion
 }

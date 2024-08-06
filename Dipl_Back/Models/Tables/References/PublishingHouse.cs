@@ -1,4 +1,5 @@
 ﻿using Dipl_Back.Models.Tables.Main;
+using System.Text.Json.Serialization;
 
 namespace Dipl_Back.Models.Tables.References;
 
@@ -18,5 +19,6 @@ public partial class PublishingHouse
     public double AddPercent { get; set; }
 
     // настройка для внешнего ключа
+    [JsonIgnore]
     public virtual ICollection<PubBook> PubBooks { get; set; } = new List<PubBook>();
 }

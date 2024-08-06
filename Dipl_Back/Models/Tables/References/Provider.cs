@@ -1,4 +1,5 @@
 ﻿using Dipl_Back.Models.Tables.Main;
+using System.Text.Json.Serialization;
 
 namespace Dipl_Back.Models.Tables.References;
 
@@ -15,5 +16,6 @@ public partial class Provider
     public string Phone { get; set; } = null!;
 
     // настройка для внешнего ключа
+    [JsonIgnore]
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }
