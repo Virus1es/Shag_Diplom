@@ -9,8 +9,11 @@ public partial class Book
     // ПК сущности
     public int Id { get; set; }
 
-    // нзвание книги
+    // название книги
     public string Title { get; set; } = null!;
+
+    // имя файла с картинкой обложки книги
+    public string BookImage { get; set; } = null!;
 
     // автор книги
     public int IdAuthor { get; set; }
@@ -26,6 +29,9 @@ public partial class Book
 
     // год написания
     public int CreationYear { get; set; }
+    
+    // год написания
+    public int AmountRatings { get; set; }
 
     // рейтинг книги
     public double Rating { get; set; }

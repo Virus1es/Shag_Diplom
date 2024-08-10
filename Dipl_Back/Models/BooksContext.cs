@@ -76,6 +76,8 @@ public partial class BooksContext : DbContext
 
             entity.Property(e => e.Title).HasMaxLength(50);
 
+            entity.Property(e => e.BookImage).HasMaxLength(50);
+
             entity.HasOne(d => d.IdAgeNavigation).WithMany(p => p.Books)
                 .HasForeignKey(d => d.IdAge)
                 .OnDelete(DeleteBehavior.ClientSetNull)

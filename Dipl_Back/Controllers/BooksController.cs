@@ -1,6 +1,7 @@
 ﻿using Dipl_Back.Models;
 using Dipl_Back.Models.Tables.Main;
 using Microsoft.AspNetCore.Mvc;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Dipl_Back.Controllers;
 
@@ -18,9 +19,9 @@ public class BooksController(BooksContext context) : Controller
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
-    public string Post([FromForm] int id, [FromForm] string Title, [FromForm] int IdAuthor,
-                       [FromForm] int IdGenre, [FromForm] int IdAge, [FromForm] int Price, 
-                       [FromForm] int CreationYear, [FromForm] double Rating)
+    public string Post([FromForm] int id, [FromForm] string Title, [FromForm] string Image,
+                      [FromForm] int IdAuthor, [FromForm] int IdGenre, [FromForm] int IdAge,
+                      [FromForm] int Price, [FromForm] int CreationYear)
     {
         try
         {
@@ -29,12 +30,12 @@ public class BooksController(BooksContext context) : Controller
                 // имитируем изменение данных
                 Id = id,
                 Title = Title,
+                BookImage = Image,
                 IdAuthor = IdAuthor,
                 IdGenre = IdGenre,
                 IdAge = IdAge,
                 Price = Price,
-                CreationYear = CreationYear,
-                Rating = Rating
+                CreationYear = CreationYear
             };
 
             // сохраняем изменения
@@ -49,11 +50,44 @@ public class BooksController(BooksContext context) : Controller
         }
     }
 
+    // изменение рейтинга книги
+    [HttpPost]
+    public string Post([FromForm] int id, [FromForm] int grade)
+    {
+        try
+        {
+            // находим книгу которой поставили оценку
+            Book book = _db.Books.Find(id) ?? throw new Exception("Книга не найдена");
+
+            // увеличиваем количество проголосовавших
+            book.AmountRatings++;
+
+            // рассчитываем изминившуюся оценку:
+            // находим сумму предыдущих оценок (умножая старую оценку на прошлое количество проголосовавших)
+            // далее добавлем к сумме пришедшую оценку и делим на настоящее количество проголосовавших
+            double freshRating = (book.Rating * (book.AmountRatings - 1) + grade) / book.AmountRatings;
+
+            // обновляем рейтинг книги
+            book.Rating = freshRating;
+
+            // сохраняем изменения
+            _db.Books.Update(book);
+            _db.SaveChanges();
+
+            return "";
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
+    }
+
+
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
-    public string Put([FromForm] int id, [FromForm] string Title, [FromForm] int IdAuthor,
-                       [FromForm] int IdGenre, [FromForm] int IdAge, [FromForm] int Price,
-                       [FromForm] int CreationYear, [FromForm] double Rating)
+    public string Put([FromForm] int id, [FromForm] string Title, [FromForm] string Image, 
+                      [FromForm] int IdAuthor, [FromForm] int IdGenre, [FromForm] int IdAge, 
+                      [FromForm] int Price, [FromForm] int CreationYear)
     {
         try
         {
@@ -66,12 +100,14 @@ public class BooksController(BooksContext context) : Controller
                 // имитируем изменение данных
                 Id = id,
                 Title = Title,
+                BookImage = Image,
                 IdAuthor = IdAuthor,
                 IdGenre = IdGenre,
                 IdAge = IdAge,
                 Price = Price,
                 CreationYear = CreationYear,
-                Rating = Rating
+                Rating = 0.0,
+                AmountRatings = 0
             };
 
             // сохраняем изменения
