@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Прочтика</title>
+
+    <link rel="stylesheet" href="/styles/index.css">
+    <link rel="stylesheet" href="/styles/flickity.css">
+
+    <!-- локальное подключение React -->
+    <script src="lib/react/react.production.min.js"></script>
+    <script src="lib/react/react-dom.production.min.js"></script>
+    <script src="lib/babel.min.js"></script>
+
+    <script src="node_modules/react-flickity-component/dist/react-flickity-component.umd.js"></script>
+
+    <!-- <script src="src/index.js"></script> -->
+
+    <!-- подключение файла-иконки -->
+    <link rel="shortcut icon" href="img/icon_book.png" type="image/x-icon">
+</head>
+<body>
+
+<!-- react-разметка выводится тут-->
+<div id="app"></div>
+
+<script type="text/babel">
+    import Flickity from 'react-flickity-component'
+
+    const flickityOptions = {
+        initialIndex: 2
+    }
+
+    // вывод книг в верхней части экрана
+    function ShowUpperBooks() {
+        let str = [];
+        for (let i = 0; i < 5; i++) {
+            let count = i * 5;
+            str.push(
+                <div className="book-cell">
+                    <div className="book-img">
+                        <img src="https://фантазеры.рф/wa-data/public/shop/products/85/17/121785/images/267972/267972.750x0.jpg"
+                             alt="Преступление и наказание"
+                             className="book-photo"/>
+                    </div>
+                    <div className="book-content">
+                        <div className="book-title">Преступление и наказание</div>
+                        <div className="book-author">Достоевский Ф. М.</div>
+                        <div className="rate">
+                            <fieldset className="rating yellow">
+                                <input type="checkbox" id={"star" + (count + 5).toString()} name="rating"
+                                       value="5"/>
+                                <label className="full" htmlFor={"star" + (count + 5).toString()}></label>
+                                <input type="checkbox" id={"star" + (count + 4).toString()} name="rating"
+                                       value="4"/>
+                                <label className="full" htmlFor={"star" + (count + 4).toString()}></label>
+                                <input type="checkbox" id={"star" + (count + 3).toString()} name="rating"
+                                       value="3"/>
+                                <label className="full" htmlFor={"star" + (count + 3).toString()}></label>
+                                <input type="checkbox" id={"star" + (count + 2).toString()} name="rating"
+                                       value="2"/>
+                                <label className="full" htmlFor={"star" + (count + 2).toString()}></label>
+                                <input type="checkbox" id={"star" + (count + 1).toString()} name="rating"
+                                       value="1"/>
+                                <label className="full" htmlFor={"star" + (count + 1).toString()}></label>
+                            </fieldset>
+                            <span className="book-voters">Оценок: 1.987 </span>
+                        </div>
+                        <div className="book-sum">
+                            Социально-психологический и социально-философский роман.
+                        </div>
+                        <div className="book-see">Подробнее</div>
+                    </div>
+                </div>
+            );
+        }
+        return str;
+    }
+
+    function Carousel() {
+        return (
+            <div className="book-slide">
+                <Flickity
+                    className={'book'} // default ''
+                    elementType={'div'} // default 'div'
+                    options={flickityOptions} // takes flickity options {}
+                    disableImagesLoaded={false} // default false
+                    reloadOnUpdate // default false
+                    static // default false
+                >
+                    <ShowUpperBooks/>
+                </Flickity>
+            </div>
+        )
+    }
+/*
+                <div className="book-slide">
+                    <div className="book js-flickity" data-flickity-options='{ "wrapAround": true }'>
+                        <ShowUpperBooks/>
+                    </div>
+                </div>
+ */
+
+    ReactDOM.createRoot(document.getElementById("app"))
+        .render(
+            <div className="book-store">
+                <div className="header">
+                    <div className="browse">
+                        <div className="browse-category">
+                            Книги по жанру
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor"
+                                 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                 className="feather feather-chevron-down">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div className="search-bar">
+                            <label>
+                                <input type="text" placeholder="Найти книгу"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div className="header-title">Прочти<span>ка</span></div>
+                    <div className="profile">
+                        <div className="user-profile">
+                            <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="" className="user-img"/>
+                        </div>
+                        <div className="profile-menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor"
+                                 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                 className="feather feather-menu">
+                                <path d="M3 12h18M3 6h18M3 18h18"/>
+                            </svg>
+                            Меню
+                        </div>
+                    </div>
+                </div>
+                <Carousel/>
+                <div className="main-wrapper">
+                    <div className="books-of">
+                        <div className="week">
+                            <div className="author-title">Авторы недели</div>
+                            <div className="author">
+                                <img
+                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80"
+                                    alt="" className="author-img"/>
+                                <div className="author-name">Sebastian Jeremy</div>
+                            </div>
+                            <div className="author">
+                                <img
+                                    src="https://images.unsplash.com/photo-1586297098710-0382a496c814?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
+                                    alt="" className="author-img"/>
+                                <div className="author-name">Jonathan Doe</div>
+                            </div>
+                            <div className="author">
+                                <img
+                                    src="https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+                                    alt="" className="author-img"/>
+                                <div className="author-name">Angeline Summer</div>
+                            </div>
+                            <div className="author">
+                                <img
+                                    src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                    alt="" className="author-img"/>
+                                <div className="author-name">Noah Jones</div>
+                            </div>
+                            <div className="author">
+                                <img
+                                    src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                    alt="" className="author-img"/>
+                                <div className="author-name">Tommy Adam</div>
+                            </div>
+                            <div className="author">
+                                <img
+                                    src="https://images.unsplash.com/photo-1546961329-78bef0414d7c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+                                    alt="" className="author-img"/>
+                                <div className="author-name">Ian Cassandra</div>
+                            </div>
+                        </div>
+                        <div className="week year">
+                            <div className="author-title">Популярные книги</div>
+                            <div className="year-book">
+                                <img src="https://images-na.ssl-images-amazon.com/images/I/A1kNdYXw0GL.jpg" alt=""
+                                     className="year-book-img"/>
+                                <div className="year-book-content">
+                                    <div className="year-book-name">Disappearing Earth</div>
+                                    <div className="year-book-author">by Julia Phillips</div>
+                                </div>
+                            </div>
+                            <div className="year-book">
+                                <img src="https://images-na.ssl-images-amazon.com/images/I/81eI0ExR+VL.jpg" alt=""
+                                     className="year-book-img"/>
+                                <div className="year-book-content">
+                                    <div className="year-book-name">Lost Children Archive</div>
+                                    <div className="year-book-author">by Valeria Luiselli</div>
+                                </div>
+                            </div>
+                            <div className="year-book">
+                                <img src="https://images-na.ssl-images-amazon.com/images/I/81OF9eJDA4L.jpg" alt=""
+                                     className="year-book-img"/>
+                                <div className="year-book-content">
+                                    <div className="year-book-name">Phantoms: A Thriller</div>
+                                    <div className="year-book-author">by Dean Koontz</div>
+                                </div>
+                            </div>
+                            <div className="year-book">
+                                <img src="https://m.media-amazon.com/images/I/515FWPyZ-5L.jpg" alt=""
+                                     className="year-book-img"/>
+                                <div className="year-book-content">
+                                    <div className="year-book-name">Midnight in Chernobyl</div>
+                                    <div className="year-book-author">by Adam Higginbotham</div>
+                                </div>
+                            </div>
+                            <div className="year-book">
+                                <img src="https://images-na.ssl-images-amazon.com/images/I/91dBtgERNUL.jpg" alt=""
+                                     className="year-book-img"/>
+                                <div className="year-book-content">
+                                    <div className="year-book-name">10 Minutes 38 Seconds</div>
+                                    <div className="year-book-author">by Elif Shafak</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="overlay"></div>
+                    </div>
+                    <div className="popular-books">
+                        <div className="main-menu">
+                            <div className="genre">Popular by Genre</div>
+                            <div className="book-types">
+                                <a href="#" className="book-type active"> All Genres</a>
+                                <a href="#" className="book-type"> Business</a>
+                                <a href="#" className="book-type"> Science</a>
+                                <a href="#" className="book-type"> Fiction</a>
+                                <a href="#" className="book-type"> Philosophy</a>
+                                <a href="#" className="book-type"> Biography</a>
+                            </div>
+                        </div>
+                        <div className="book-cards">
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img
+                                        src="https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2019%2F07%2Fchances-are-1-2000.jpg&q=85"
+                                        alt="" className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">Changes Are</div>
+                                        <div className="book-by">by Richard Russo</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c1" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c1"></label>
+                                                <input type="checkbox" id="star-c2" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c2"></label>
+                                                <input type="checkbox" id="star-c3" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c3"></label>
+                                                <input type="checkbox" id="star-c4" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c4"></label>
+                                                <input type="checkbox" id="star-c5" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c5"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt=""
+                                             className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-name">
+                                        <span>Samantha William</span> and<span> 2 other friends</span> like this
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img src="https://images-na.ssl-images-amazon.com/images/I/7167iiDUeAL.jpg" alt=""
+                                         className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">Dominicana</div>
+                                        <div className="book-by">by Angie Cruz</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c6" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c6"></label>
+                                                <input type="checkbox" id="star-c7" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c7"></label>
+                                                <input type="checkbox" id="star-c8" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c8"></label>
+                                                <input type="checkbox" id="star-c9" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c9"></label>
+                                                <input type="checkbox" id="star-c10" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c10"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt=""
+                                             className="like-img"/>
+                                    </div>
+                                    <div className="like-name"><span>Kimberly Jones</span> like this</div>
+                                </div>
+                            </div>
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img
+                                        src="https://assets.fontsinuse.com/static/use-media-items/95/94294/full-2000x3056/5d56c6b1/cg%201.jpeg?resolution=0"
+                                        alt="" className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">The Travellers</div>
+                                        <div className="book-by">by Regina Porter</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c11" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c11"></label>
+                                                <input type="checkbox" id="star-c12" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c12"></label>
+                                                <input type="checkbox" id="star-c13" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c13"></label>
+                                                <input type="checkbox" id="star-c14" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c14"></label>
+                                                <input type="checkbox" id="star-c15" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c15"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt=""
+                                             className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-name"><span>Adam</span> and<span> Kimberly</span> like this</div>
+                                </div>
+                            </div>
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img src="https://images-na.ssl-images-amazon.com/images/I/91M4E+SURUL.jpg" alt=""
+                                         className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">Afternoon Of A Faun</div>
+                                        <div className="book-by">by James Lasdun</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c16" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c16"></label>
+                                                <input type="checkbox" id="star-c17" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c17"></label>
+                                                <input type="checkbox" id="star-c18" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c18"></label>
+                                                <input type="checkbox" id="star-c19" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c19"></label>
+                                                <input type="checkbox" id="star-c20" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c20"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt=""
+                                             className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-name">
+                                        <span>Samantha William</span> and<span> 2 other friends</span> like this
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img src="https://images-na.ssl-images-amazon.com/images/I/61OTY2-4anL.jpg" alt=""
+                                         className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">Flash Count Diary</div>
+                                        <div className="book-by">by Darcey Steinke</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c21" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c21"></label>
+                                                <input type="checkbox" id="star-c22" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c22"></label>
+                                                <input type="checkbox" id="star-c23" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c23"></label>
+                                                <input type="checkbox" id="star-c24" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c24"></label>
+                                                <input type="checkbox" id="star-c25" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c25"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt=""
+                                             className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-name"><span>Angelina Stone</span> and<span> 2 other friends</span> like
+                                        this
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img src="https://images-na.ssl-images-amazon.com/images/I/61Vc+xM23GL.jpg" alt=""
+                                         className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">Picnic Comma Lightning</div>
+                                        <div className="book-by">by Lucy Parker</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c26" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c26"></label>
+                                                <input type="checkbox" id="star-c27" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c27"></label>
+                                                <input type="checkbox" id="star-c28" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c28"></label>
+                                                <input type="checkbox" id="star-c29" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c29"></label>
+                                                <input type="checkbox" id="star-c30" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c30"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-name"><span>George</span> and<span> Mike</span> like this</div>
+                                </div>
+                            </div>
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img
+                                        src="https://avatars.mds.yandex.net/i?id=319c75fe8ce262b786282a4cb1a4bb15862a47ff2e252338-11922792-images-thumbs&n=13"
+                                        alt="" className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">Very Nica</div>
+                                        <div className="book-by">by Lucy Parker</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c31" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c31"></label>
+                                                <input type="checkbox" id="star-c32" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c32"></label>
+                                                <input type="checkbox" id="star-c33" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c33"></label>
+                                                <input type="checkbox" id="star-c34" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c34"></label>
+                                                <input type="checkbox" id="star-c35" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c35"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt=""
+                                             className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://avatars.mds.yandex.net/i?id=8d237f26d11be373a8c3675799bc269f_l-5140197-images-thumbs&n=13"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-name">
+                                        <span>Samantha William</span> and<span> 2 other friends</span> like this
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="book-card">
+                                <div className="content-wrapper">
+                                    <img src="https://images-na.ssl-images-amazon.com/images/I/71PL7BiZ5NL.jpg" alt=""
+                                         className="book-card-img"/>
+                                    <div className="card-content">
+                                        <div className="book-name">Stay And Fight</div>
+                                        <div className="book-by">by Lucy Parker</div>
+                                        <div className="rate">
+                                            <fieldset className="rating book-rate">
+                                                <input type="checkbox" id="star-c36" name="rating" value="5"/>
+                                                <label className="full" htmlFor="star-c36"></label>
+                                                <input type="checkbox" id="star-c37" name="rating" value="4"/>
+                                                <label className="full" htmlFor="star-c37"></label>
+                                                <input type="checkbox" id="star-c38" name="rating" value="3"/>
+                                                <label className="full" htmlFor="star-c38"></label>
+                                                <input type="checkbox" id="star-c39" name="rating" value="2"/>
+                                                <label className="full" htmlFor="star-c39"></label>
+                                                <input type="checkbox" id="star-c40" name="rating" value="1"/>
+                                                <label className="full" htmlFor="star-c40"></label>
+                                            </fieldset>
+                                            <span className="book-voters card-vote">1.987 voters</span>
+                                        </div>
+                                        <div className="book-sum card-sum">Readers of all ages and walks of life have drawn
+                                            inspiration and empowerment from Elizabeth Gilbert’s books for years.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="likes">
+                                    <div className="like-profile">
+                                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt=""
+                                             className="like-img"/>
+                                    </div>
+                                    <div className="like-profile">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80"
+                                            alt="" className="like-img"/>
+                                    </div>
+                                    <div className="like-name"><span>Samantha William</span> and<span> Jonathan</span> like this
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+</script>
+
+</body>
+</html>
