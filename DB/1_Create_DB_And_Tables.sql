@@ -229,15 +229,19 @@ go
 create table Books (
      Id            int          not null identity(1, 1) constraint Books_PK primary key (Id),
 	 Title         nvarchar(50) not null,                 -- название книги
+	 BookImage     nvarchar(50) not null,                 -- имя файла с картинкой обложки книги
 	 IdAuthor      int          not null,                 -- автор
 	 IdGenre       int          not null,                 -- жанр книги
 	 IdAge         int          not null,                 -- возрастное ограничение
 	 Price         int          not null,                 -- стоимость книги
 	 CreationYear  int          not null,                 -- год издания книги
+	 AmountRatings int          not null,                 -- количество оценок
 	 Rating        float        not null,                 -- рейтинг книги
 
 	 -- цена за книгу не может быть меньше 0
 	 constraint Books_Price_check check (Price > 0),
+	 -- количество оценок не может быть меньше 0
+	 constraint Books_AmountRatings_check check (AmountRatings >= 0),
 	 -- рейтинг книги не должен быть отрицательным и не должен быть больше 5
 	 constraint Books_Rating_check check (Rating between 0.0 and 5.0),
 	 -- год создания книги не может быть больше текущего года или отрицательным

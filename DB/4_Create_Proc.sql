@@ -160,3 +160,15 @@ go
 
 exec SelectBooksBestSallers;
 go
+
+-- запрос 7
+-- новинки литературы
+create or alter proc SelectNewBooks
+as
+	select
+		*
+	from
+		BooksWithFullPriceView
+	where
+		CreationYear = year(getdate());
+go
