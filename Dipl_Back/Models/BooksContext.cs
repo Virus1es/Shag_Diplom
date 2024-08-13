@@ -74,9 +74,11 @@ public partial class BooksContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("Books_PK");
 
-            entity.Property(e => e.Title).HasMaxLength(50);
+            entity.Property(e => e.Title).HasMaxLength(100);
 
-            entity.Property(e => e.BookImage).HasMaxLength(50);
+            entity.Property(e => e.BookImage).HasMaxLength(255);
+
+            entity.Property(e => e.BookDescription).HasMaxLength(500);
 
             entity.HasOne(d => d.IdAgeNavigation).WithMany(p => p.Books)
                 .HasForeignKey(d => d.IdAge)

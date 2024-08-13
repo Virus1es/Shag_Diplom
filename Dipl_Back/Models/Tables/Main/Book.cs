@@ -36,6 +36,9 @@ public partial class Book
     // рейтинг книги
     public double Rating { get; set; }
 
+    // красткое описание книги
+    public string BookDescription { get; set; } = null!;
+
     #region Настройка внешних ключей
 
     // настройка внешнего ключа для связи с таблицей Возрастные ограничения

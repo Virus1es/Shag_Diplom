@@ -1,7 +1,6 @@
 ﻿using Dipl_Back.Models;
 using Dipl_Back.Models.Tables.Main;
 using Microsoft.AspNetCore.Mvc;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Dipl_Back.Controllers;
 
@@ -21,7 +20,7 @@ public class BooksController(BooksContext context) : Controller
     [HttpPost]
     public string Post([FromForm] int id, [FromForm] string Title, [FromForm] string Image,
                       [FromForm] int IdAuthor, [FromForm] int IdGenre, [FromForm] int IdAge,
-                      [FromForm] int Price, [FromForm] int CreationYear)
+                      [FromForm] int Price, [FromForm] int CreationYear, [FromForm] string BookDescription)
     {
         try
         {
@@ -35,7 +34,8 @@ public class BooksController(BooksContext context) : Controller
                 IdGenre = IdGenre,
                 IdAge = IdAge,
                 Price = Price,
-                CreationYear = CreationYear
+                CreationYear = CreationYear,
+                BookDescription = BookDescription
             };
 
             // сохраняем изменения
@@ -87,7 +87,7 @@ public class BooksController(BooksContext context) : Controller
     [HttpPut]
     public string Put([FromForm] int id, [FromForm] string Title, [FromForm] string Image, 
                       [FromForm] int IdAuthor, [FromForm] int IdGenre, [FromForm] int IdAge, 
-                      [FromForm] int Price, [FromForm] int CreationYear)
+                      [FromForm] int Price, [FromForm] int CreationYear, [FromForm] string BookDescription)
     {
         try
         {
@@ -107,7 +107,8 @@ public class BooksController(BooksContext context) : Controller
                 Price = Price,
                 CreationYear = CreationYear,
                 Rating = 0.0,
-                AmountRatings = 0
+                AmountRatings = 0,
+                BookDescription = BookDescription
             };
 
             // сохраняем изменения
