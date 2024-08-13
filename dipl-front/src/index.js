@@ -1,54 +1,145 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Flickity from "react-flickity-component";
+const flickityOptions = {
+    initialIndex: 2
+}
+
+// получить данные по url
+function getArrayByUrl(url){
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [values, setBooks] = useState([]);
+
+    // получение данных с сервера о книгах
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+        fetch(url)
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                setBooks(data);
+            });
+    }, []);
+
+    return values;
+}
+
+// вывод книг в верхней части экрана
+// м.б. будут новинки
+function ShowUpperBooks() {
+    // получение книг с сервера
+    let books = getArrayByUrl('http://localhost:5257/books/get');
+
+    return (books.slice(0, 5).map((book) => { return(
+            <div className="book-cell">
+                <div className="book-img">
+                    <img src={require('./img/books/' + book.bookImage)}
+                         alt={book.title}
+                         className="book-photo"/>
+                </div>
+                <div className="book-content">
+                    <div className="book-title">{book.title}</div>
+                    <div className="book-author">{book.idAuthorNavigation.surname}</div>
+                    <div className="book-author">{book.idGenreNavigation.genreName}</div>
+                    <div className="rate">
+                        <fieldset className="rating yellow">
+                            <input type="checkbox" id={"star" + (book.id + 5).toString()} name="rating"
+                                   value="5"/>
+                            <label className="full" htmlFor={"star" + (book.id + 5).toString()}></label>
+                            <input type="checkbox" id={"star" + (book.id + 4).toString()} name="rating"
+                                   value="4"/>
+                            <label className="full" htmlFor={"star" + (book.id + 4).toString()}></label>
+                            <input type="checkbox" id={"star" + (book.id + 3).toString()} name="rating"
+                                   value="3"/>
+                            <label className="full" htmlFor={"star" + (book.id + 3).toString()}></label>
+                            <input type="checkbox" id={"star" + (book.id + 2).toString()} name="rating"
+                                   value="2"/>
+                            <label className="full" htmlFor={"star" + (book.id + 2).toString()}></label>
+                            <input type="checkbox" id={"star" + (book.id + 1).toString()} name="rating"
+                                   value="1"/>
+                            <label className="full" htmlFor={"star" + (book.id + 1).toString()}></label>
+                        </fieldset>
+                        <span className="book-voters">Оценок: {book.amountRatings} </span>
+                    </div>
+                    <div className="book-sum">
+                        {book.bookDescription}
+                    </div>
+                    <div className="book-see">Подробнее</div>
+                </div>
+            </div>
+        )}
+    ))
+}
+
+// вывод карусели книг
+function Carousel() {
+    let books = getArrayByUrl('http://localhost:5257/books/get');
+    console.log("||||||||||||||||");
+    console.log(books);
+    return (
+        <div className="book-slide">
+            <Flickity
+                className={'book'} // default ''
+                elementType={'div'} // default 'div'
+                options={flickityOptions} // takes flickity options {}
+                disableImagesLoaded={false} // default false
+                reloadOnUpdate // default false
+                static // default false
+            >
+                <ShowUpperBooks/>
+            </Flickity>
+        </div>
+    )
+}
 
 // вывод популярных книг в определённом жанре или из всех жанров
-function ShowBooksByGenre(){
-    let str = [];
+function ShowBooksByGenre() {
+    // получение книг с сервера
+    let books = getArrayByUrl('http://localhost:5257/books/get');
 
-    for (let i = 0; i < 6; i++) {
-        let count = i * 5;
-        str.push(
+    // заполнение массива разметкой
+    return (books.map((book) => { return(
             <div className="book-card">
                 <div className="content-wrapper">
-                    <img src={require('./img/books/dostoevskii_nakazanie.jpg')}
-                         alt=""
+                    <img src={require('./img/books/' + book.bookImage)}
+                         alt={book.title}
                          className="book-card-img"/>
                     <div className="card-content">
-                        <div className="book-name">Преступление и наказание</div>
-                        <div className="book-by">Достоевский Ф. М.</div>
+                        <div className="book-name">{book.title}</div>
+                        <div className="book-by">{book.idAuthorNavigation.surname}</div>
+                        <div className="book-by">{book.idGenreNavigation.genreName}</div>
                         <div className="rate">
                             <fieldset className="rating book-rate">
-                                <input type="checkbox" id={"star-c" + (count + 5).toString()} name="rating" value="5"/>
-                                <label className="full" htmlFor={"star-c" + (count + 5).toString()}></label>
-                                <input type="checkbox" id={"star-c" + (count + 4).toString()} name="rating" value="4"/>
-                                <label className="full" htmlFor={"star-c" + (count + 4).toString()}></label>
-                                <input type="checkbox" id={"star-c" + (count + 3).toString()} name="rating" value="3"/>
-                                <label className="full" htmlFor={"star-c" + (count + 3).toString()}></label>
-                                <input type="checkbox" id={"star-c" + (count + 2).toString()} name="rating" value="2"/>
-                                <label className="full" htmlFor={"star-c" + (count + 2).toString()}></label>
-                                <input type="checkbox" id={"star-c" + (count + 1).toString()} name="rating" value="1"/>
-                                <label className="full" htmlFor={"star-c" + (count + 1).toString()}></label>
+                                <input type="checkbox" id={"star-c" + (book.id + 5).toString()} name="rating" value="5"/>
+                                <label className="full" htmlFor={"star-c" + (book.id + 5).toString()}></label>
+                                <input type="checkbox" id={"star-c" + (book.id + 4).toString()} name="rating" value="4"/>
+                                <label className="full" htmlFor={"star-c" + (book.id + 4).toString()}></label>
+                                <input type="checkbox" id={"star-c" + (book.id + 3).toString()} name="rating" value="3"/>
+                                <label className="full" htmlFor={"star-c" + (book.id + 3).toString()}></label>
+                                <input type="checkbox" id={"star-c" + (book.id + 2).toString()} name="rating" value="2"/>
+                                <label className="full" htmlFor={"star-c" + (book.id + 2).toString()}></label>
+                                <input type="checkbox" id={"star-c" + (book.id + 1).toString()} name="rating" value="1"/>
+                                <label className="full" htmlFor={"star-c" + (book.id + 1).toString()}></label>
                             </fieldset>
-                            <span className="book-voters card-vote">Оценок: 1.987</span>
+                            <span className="book-voters card-vote">Оценок: {book.amountRatings}</span>
                         </div>
                         <div className="book-sum card-sum">
-                            Социально-психологический и социально-философский роман.
+                            {book.bookDescription}
                         </div>
                     </div>
                 </div>
                 <div className="likes">
-                    <div className="like-name">Текущая оценка: <span>4.7</span></div>
+                    <div className="like-name">Текущая оценка: <span>{book.rating.toFixed(2)}</span></div>
                 </div>
             </div>
-        );
-    }
-
-    return str;
+        )}
+    ))
 }
-
 
 // вывод популярных авторов этой недели
 function ShowWeekAuthors() {
@@ -126,6 +217,8 @@ root.render(
             </div>
         </div>
 
+        <Carousel/>
+
         <React.StrictMode>
             <App/>
         </React.StrictMode>
@@ -144,14 +237,14 @@ root.render(
             </div>
             <div className="popular-books">
                 <div className="main-menu">
-                    <div className="genre">Popular by Genre</div>
+                    <div className="genre">Подборки книг</div>
                     <div className="book-types">
-                        <a href="#" className="book-type active"> All Genres</a>
-                        <a href="#" className="book-type"> Business</a>
-                        <a href="#" className="book-type"> Science</a>
-                        <a href="#" className="book-type"> Fiction</a>
-                        <a href="#" className="book-type"> Philosophy</a>
-                        <a href="#" className="book-type"> Biography</a>
+                        <a href="#" className="book-type active">Набирающие популярность</a>
+                        <a href="#" className="book-type">Бестселлеры жанра</a>
+                        <a href="#" className="book-type">Выбор редакции</a>
+                        <a href="#" className="book-type">Классика</a>
+                        <a href="#" className="book-type">Philosophy</a>
+                        <a href="#" className="book-type">Biography</a>
                     </div>
                 </div>
                 <div className="book-cards">

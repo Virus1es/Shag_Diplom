@@ -363,7 +363,7 @@ h1 {
     font-size: 14px;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
 
@@ -697,7 +697,7 @@ h1 {
 }
 
 .like-name {
-    margin: 10px 0 0 15px;
+    margin: 10px 0 10px 15px;
     font-size: 13px;
     text-overflow: ellipsis;
     overflow: hidden;
