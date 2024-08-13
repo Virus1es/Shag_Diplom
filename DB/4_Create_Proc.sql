@@ -78,6 +78,7 @@ create or alter proc SelectAmountBooksSales
 as
 	select
 		Books.Title
+		, Books.BookImage
 		, Authors.Surname + ' ' + SUBSTRING(Authors.FirstName,1,1) + '.' + 
 				SUBSTRING(Authors.Patronymic,1,1) + '.'  as AuthorFullname
 		, Genres.GenreName
@@ -90,7 +91,7 @@ as
 	where
 		SaleDate between @StartDate and @EndDate
 	group by
-		Books.Title, Authors.Surname, Authors.FirstName, Authors.Patronymic, Genres.GenreName;
+		Books.Title, Books.BookImage, Authors.Surname, Authors.FirstName, Authors.Patronymic, Genres.GenreName;
 go
 
 exec SelectAmountBooksSales '2023-01-01', '2024-10-01';
@@ -107,6 +108,7 @@ as
 
 	select TOP (1)
 		Books.Title
+		, Books.BookImage
 		, Authors.Surname + ' ' + SUBSTRING(Authors.FirstName,1,1) + '.' + 
 				SUBSTRING(Authors.Patronymic,1,1) + '.'  as AuthorFullname
 		, Genres.GenreName
@@ -119,7 +121,7 @@ as
 		 where
 			Genres.GenreName = @SelectGenre
 		 group by 
-			Books.Title, Authors.Surname, Authors.FirstName, Authors.Patronymic, Genres.GenreName
+			Books.Title, Books.BookImage, Authors.Surname, Authors.FirstName, Authors.Patronymic, Genres.GenreName
 		 order by 
 			Amount desc;
 go

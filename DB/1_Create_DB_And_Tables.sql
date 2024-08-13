@@ -227,16 +227,17 @@ go
 
 -- создание таблицы  ниги
 create table Books (
-     Id            int          not null identity(1, 1) constraint Books_PK primary key (Id),
-	 Title         nvarchar(50) not null,                 -- название книги
-	 BookImage     nvarchar(50) not null,                 -- им€ файла с картинкой обложки книги
-	 IdAuthor      int          not null,                 -- автор
-	 IdGenre       int          not null,                 -- жанр книги
-	 IdAge         int          not null,                 -- возрастное ограничение
-	 Price         int          not null,                 -- стоимость книги
-	 CreationYear  int          not null,                 -- год издани€ книги
-	 AmountRatings int          not null,                 -- количество оценок
-	 Rating        float        not null,                 -- рейтинг книги
+     Id              int           not null identity(1, 1) constraint Books_PK primary key (Id),
+	 Title           nvarchar(100) not null,                 -- название книги
+	 BookImage       nvarchar(255) not null,                 -- им€ файла с картинкой обложки книги
+	 IdAuthor        int           not null,                 -- автор
+	 IdGenre         int           not null,                 -- жанр книги
+	 IdAge           int           not null,                 -- возрастное ограничение
+	 Price           int           not null,                 -- стоимость книги
+	 CreationYear    int           not null,                 -- год издани€ книги
+	 AmountRatings   int           not null,                 -- количество оценок
+	 Rating          float         not null,                 -- рейтинг книги
+	 BookDescription nvarchar(500) not null,                 -- краткое описание книги
 
 	 -- цена за книгу не может быть меньше 0
 	 constraint Books_Price_check check (Price > 0),

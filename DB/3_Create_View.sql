@@ -10,6 +10,7 @@ create or alter view BooksOnWarehouseView with schemabinding as
 select
 	IdPubBook
 	, Books.Title
+	, Books.BookImage
 	, Authors.Surname + ' ' + SUBSTRING(Authors.FirstName,1,1) + '.' + 
 				SUBSTRING(Authors.Patronymic,1,1) + '.'  as AuthorFullname
 	, PublishingHouses.[Name]
@@ -25,7 +26,7 @@ from
 									 join dbo.PublishingHouses on PubBooks.IdHouse = PublishingHouses.Id)
 					on Purchases.IdPubBook = PubBooks.Id
 group by
-	IdPubBook, Books.Title, Authors.Surname, Authors.FirstName, Authors.Patronymic, PublishingHouses.[Name];
+	IdPubBook, Books.Title, Books.BookImage, Authors.Surname, Authors.FirstName, Authors.Patronymic, PublishingHouses.[Name];
 go
 
 select * from BooksOnWarehouseView;
@@ -35,6 +36,7 @@ go
 create or alter view BooksWithFullPriceView with schemabinding as
 select
 	Books.Title
+	, Books.BookImage
 	, Authors.FirstName
 	, Authors.Surname
 	, Authors.Patronymic
@@ -43,6 +45,7 @@ select
 	, AgeRestrictions.AgeRange
 	, Books.Rating
 	, Books.CreationYear
+	, Books.BookDescription
 	, Books.Price + Books.Price * (PublishingHouses.AddPercent / 100) as FullPrice
 from
 	dbo.PubBooks join (dbo.Books join dbo.Authors on Books.IdAuthor = Authors.Id
