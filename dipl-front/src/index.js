@@ -5,7 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Flickity from "react-flickity-component";
 const flickityOptions = {
-    initialIndex: 2
+    initialIndex: 2,
+    wrapAround: true
 }
 
 // получить данные по url
