@@ -41,9 +41,9 @@ body {
 
 .book-store {
     display: flex;
+    float: left;
     flex-direction: column;
     max-width: 100%; /* 1400px */
-    height: 100vh;
     background-color: var(--page-bg-color);
     margin: 0 auto;
     overflow-x: hidden;
@@ -63,6 +63,19 @@ body {
     color: var(--body-color-light);
     justify-content: space-between;
     flex-shrink: 0;
+}
+
+.search{
+    margin-left: 10px;
+}
+
+.genre-tag{
+    margin-top: 5px;
+    display: block
+}
+
+.stars{
+    margin: 10px 0 5px 0;
 }
 
 .search-bar {
@@ -86,6 +99,8 @@ body {
         }
     }
 }
+
+
 
 .browse {
     display: flex;
@@ -125,18 +140,7 @@ body {
     position: relative;
     cursor: pointer;
     flex-shrink: 0;
-    &:before {
-        content: "";
-        position: absolute;
-        background-color: #f86d72;
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        border: 2px solid var(--theme-bg-color);
-        right: 12px;
-        top: -3px;
-        border: 2px solid #ffffff;
-    }
+    margin-right: 5px;
 }
 
 .profile {
@@ -152,6 +156,7 @@ body {
 
 .profile-menu {
     display: flex;
+    cursor: pointer;
     align-items: center;
     border-left: 1px solid var(--border-color);
 }
@@ -170,7 +175,7 @@ body {
     display: flex;
     padding: 25px;
     width: 40%;
-    height: 250px;
+    height: 265px;
     margin-right: 1px;
     &:nth-child(1) {
         background-color: #fbadaf;
@@ -351,15 +356,15 @@ h1 {
 
 .book-voters {
     color: #fff;
-    vertical-align: sub;
-    font-size: 13px;
-    margin-left: 7px;
+    vertical-align: center;
+    font-size: 11pt;
+    margin-left: 15px;
     white-space: nowrap;
-    margin-top: 7px;
+    margin-top: 12px;
 }
 
 .book-sum {
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 14px;
     overflow: hidden;
     display: -webkit-box;
@@ -368,7 +373,8 @@ h1 {
 }
 
 .book-see {
-    margin-top: 25px;
+    cursor: pointer;
+    margin-top: 20px;
     text-align: center;
     background-color: #fff;
     color: #fbadaf;
@@ -469,25 +475,12 @@ h1 {
         &:before {
             content: "";
             position: absolute;
-            width: 28px;
+            width: 100%;
             height: 2px;
             bottom: -17px;
-            right: 15px;
-            background-color: #67d4ea;
+            background-color: #67eaa6;
             box-shadow: 0 -1px 5px 0 #67d4ea;
         }
-    }
-    &:nth-child(2):before {
-        right: 12px;
-    }
-    &:nth-child(3):before {
-        right: 8px;
-    }
-    &:nth-child(4):before {
-        right: 6px;
-    }
-    &:nth-child(5):before {
-        right: 20px;
     }
 }
 
@@ -581,7 +574,7 @@ h1 {
 .book-card {
     margin-top: 20px;
     background-color: #fff;
-    height: 270px;
+    height: 300px;
     box-shadow: -1px 3px 8px -1px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     display: flex;
@@ -634,7 +627,8 @@ h1 {
 }
 
 .rate {
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
     white-space: nowrap;
 }
 
@@ -795,5 +789,15 @@ h1 {
 @media (max-width: 372px)  {
     .card-content {
         padding: 20px;
+    }
+}
+
+@media (max-width: 540px) {
+    #sidenav-open {
+        visibility: hidden;
+    }
+
+    #sidenav-open:target {
+        visibility: visible;
     }
 }
