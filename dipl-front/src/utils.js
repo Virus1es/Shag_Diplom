@@ -1,12 +1,10 @@
 import {useEffect, useState} from 'react';
 
 // получить данные по url
-export function getArrayByUrl(url) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+export function GetArrayByUrl(url) {
     const [values, setBooks] = useState([]);
 
     // получение данных с сервера о книгах
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         fetch(url)
             .then((res) => {
