@@ -70,7 +70,7 @@ go
 
 -- запрос 4
 -- количество проданных книг (для составлени подборок типа: популярные, лидеры продаж, набирают популярность)
--- дату не убираю т.к. можно будет использовать для подборки "набирают популятрность" 
+-- дату не убираю т.к. можно будет использовать для подборки "набирают популярность" 
 -- т.е. книги с самыми высокими продажами на за последнюю неделю 
 create or alter proc SelectAmountBooksSales
 	@StartDate date,
@@ -79,8 +79,9 @@ as
 	select
 		Books.Title
 		, Books.BookImage
-		, Authors.Surname + ' ' + SUBSTRING(Authors.FirstName,1,1) + '.' + 
-				SUBSTRING(Authors.Patronymic,1,1) + '.'  as AuthorFullname
+		, Authors.Surname 
+		, Authors.FirstName
+		, Authors.Patronymic
 		, Genres.GenreName
 		, sum(Amount) as Amount
 	from
@@ -91,7 +92,9 @@ as
 	where
 		SaleDate between @StartDate and @EndDate
 	group by
-		Books.Title, Books.BookImage, Authors.Surname, Authors.FirstName, Authors.Patronymic, Genres.GenreName;
+		Books.Title, Books.BookImage, Authors.Surname, Authors.FirstName, Authors.Patronymic, Genres.GenreName
+	order by
+		Amount desc;
 go
 
 exec SelectAmountBooksSales '2023-01-01', '2024-10-01';
@@ -173,4 +176,32 @@ as
 		BooksWithFullPriceView
 	where
 		CreationYear = year(getdate());
+go
+
+
+-- запрос 8
+-- авторы недели (месяца, года, ...)
+create or alter proc SelectAuthorByAmountBooksSales
+	@StartDate date,
+	@EndDate date
+as
+	select
+		Authors.Surname 
+		, Authors.FirstName
+		, Authors.Patronymic
+		, sum(Sales.Amount) as Amount
+	from
+		Sales join (PubBooks join (Books join Genres on Books.IdGenre = Genres.Id
+										 join dbo.Authors on Books.IdAuthor = Authors.Id)
+								on PubBooks.IdBook = Books.Id)
+				on Sales.IdPubBook = PubBooks.Id
+	where
+		SaleDate between @StartDate and @EndDate
+	group by
+		Authors.Surname, Authors.FirstName, Authors.Patronymic
+	order by
+		Amount desc;
+go
+
+exec SelectAuthorByAmountBooksSales '2024-05-01', '2024-10-01';
 go
