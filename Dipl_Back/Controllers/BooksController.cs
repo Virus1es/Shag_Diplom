@@ -1,6 +1,8 @@
 ﻿using Dipl_Back.Models;
+using Dipl_Back.Models.Dto.Procedures;
 using Dipl_Back.Models.Tables.Main;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dipl_Back.Controllers;
 
@@ -15,6 +17,41 @@ public class BooksController(BooksContext context) : Controller
     // получить список книг
     [HttpGet]
     public JsonResult Get() => new(_db.Books.ToList());
+
+    // поиск книг
+    [HttpGet]
+    public JsonResult Search([FromForm] string type, [FromForm] string? Title, [FromForm] string? Author,
+                             [FromForm] string? Genre, [FromForm] int? Price, [FromForm] int? Year) {
+
+        // в зависимости от поля поиска фильтруем по переданному значению
+        List<Book> books = type switch {
+            "title" => _db.Books.Where(b => b.Title
+                                              .Contains(Title)).ToList(),
+
+            "author" => _db.Books.Where(b => b.IdAuthorNavigation
+                                              .FullName()
+                                              .Contains(Author)).ToList(),
+
+            "price" => _db.Books.Where(b => b.Price == Price).ToList(),
+
+            "genre" => _db.Books.Where(b => b.IdGenreNavigation
+                                              .GenreName
+                                              .Contains(Genre)).ToList(),
+
+            "year" => _db.Books.Where(b => b.CreationYear == Year).ToList(),
+            _ => []
+        };
+
+        return new(books);
+    }
+
+    // получение данных из процедуры SelectAmountBooksSales
+    [HttpGet]
+    public JsonResult Popular() =>
+        new(_db.Database
+               .SqlQueryRaw<SelectAmountBooksSales>("EXEC SelectAmountBooksSales '2023-01-01', '2024-10-01'")
+               .ToList());
+
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]

@@ -18,6 +18,9 @@ public partial class Author
     // отчетство автора (при наличии)
     public string? Patronymic { get; set; }
 
+    // полное ФИО автора
+    public string FullName() => $"{Surname} {FirstName} {Patronymic}";
+
     // настройка внешнего ключа
     [JsonIgnore]
     public virtual ICollection<Book> Books { get; set; } = new List<Book>();

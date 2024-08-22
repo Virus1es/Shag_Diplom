@@ -1,6 +1,8 @@
 ﻿using Dipl_Back.Models;
+using Dipl_Back.Models.Dto.Procedures;
 using Dipl_Back.Models.Tables.References;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dipl_Back.Controllers;
 
@@ -14,6 +16,12 @@ public class AuthorsController(BooksContext context) : Controller
 
     [HttpGet]
     public JsonResult Get() => new(_db.Authors.ToList());
+
+    [HttpGet]
+    public JsonResult Popular() =>
+        new(_db.Database
+               .SqlQueryRaw<SelectAuthorByAmountBooksSales>("EXEC SelectAuthorByAmountBooksSales '2024-05-01', '2024-10-01'")
+               .ToList());
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
