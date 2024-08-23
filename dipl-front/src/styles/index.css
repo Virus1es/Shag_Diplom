@@ -575,7 +575,7 @@ h1 {
 .book-card {
     margin-top: 20px;
     background-color: #fff;
-    height: 300px;
+    height: 325px;
     box-shadow: -1px 3px 8px -1px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     display: flex;
@@ -692,8 +692,9 @@ h1 {
 }
 
 .like-name {
-    margin: 10px 0 10px 15px;
-    font-size: 13px;
+    margin: 10px 0 20px 15px;
+    font-size: 13pt;
+    color: black;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

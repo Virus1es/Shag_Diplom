@@ -4,6 +4,7 @@ import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import ShowStores from "./pages/stores";
 import Home from "./pages/home";
+import ShowResults from "./pages/serchRez"
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
         path: "stores",
         element: <ShowStores/>,
     },
+    {
+        path: "booksearch",
+        element: <ShowResults/>
+    }
 ]);
 
 root.render(

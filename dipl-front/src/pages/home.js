@@ -132,6 +132,11 @@ function ShowBooksByGenre() {
                             </div>
                         </div>
                     </div>
+                    <div className="likes">
+                        <div className="like-name">
+                            <span>Цена: </span> {book.price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}
+                        </div>
+                    </div>
                 </div>
             )
         }
@@ -147,14 +152,14 @@ function ShowWeekAuthors() {
 
     // заполнение массива разметкой
     return (authors.map((author) => {
-        let str = author.surname + ' ' + author.firstName[0] + '. ' + checkPatronymic(author.patronymic);
+            let str = author.surname + ' ' + author.firstName[0] + '. ' + checkPatronymic(author.patronymic);
 
-        return (
-            <div className="author">
-                <Chip label={str}/>
-            </div>
-        );
-    })
+            return (
+                <div className="author">
+                    <Chip label={str}/>
+                </div>
+            );
+        })
     )
 }
 
@@ -187,7 +192,6 @@ export default function Home(){
             <React.StrictMode>
                 <App/>
             </React.StrictMode>
-
 
             <MyCarousel/>
 
