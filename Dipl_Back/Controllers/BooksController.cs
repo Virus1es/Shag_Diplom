@@ -19,31 +19,9 @@ public class BooksController(BooksContext context) : Controller
     public JsonResult Get() => new(_db.Books.ToList());
 
     // поиск книг
-    [HttpGet]
-    public JsonResult Search([FromForm] string type, [FromForm] string? Title, [FromForm] string? Author,
-                             [FromForm] string? Genre, [FromForm] int? Price, [FromForm] int? Year) {
-
-        // в зависимости от поля поиска фильтруем по переданному значению
-        List<Book> books = type switch {
-            "title" => _db.Books.Where(b => b.Title
-                                              .Contains(Title)).ToList(),
-
-            "author" => _db.Books.Where(b => b.IdAuthorNavigation
-                                              .FullName()
-                                              .Contains(Author)).ToList(),
-
-            "price" => _db.Books.Where(b => b.Price == Price).ToList(),
-
-            "genre" => _db.Books.Where(b => b.IdGenreNavigation
-                                              .GenreName
-                                              .Contains(Genre)).ToList(),
-
-            "year" => _db.Books.Where(b => b.CreationYear == Year).ToList(),
-            _ => []
-        };
-
-        return new(books);
-    }
+    [HttpPost]
+    public JsonResult SearchByTitle([FromForm] string Title) => 
+        new(_db.Books.Where(b => b.Title.Contains(Title)).ToList());
 
     // получение данных из процедуры SelectAmountBooksSales
     [HttpGet]
