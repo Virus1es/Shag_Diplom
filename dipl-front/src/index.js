@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import ShowStores from "./pages/stores";
-import Home from "./pages/home";
-import ShowResults from "./pages/serchRez"
+import ShowStores from "./userPages/stores";
+import Home from "./userPages/home";
+import ShowResults from "./userPages/serchRez"
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -1,31 +1,67 @@
 import './styles/index.css';
 import 'primeicons/primeicons.css';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Sidebar} from 'primereact/sidebar';
 import { AutoComplete } from "primereact/autocomplete";
 import {isUndefined} from "swr/_internal";
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
-import {GetArrayByUrl} from "./utils";
+import {GetArrayByUrl, GetArrayByUrlWithHeaders} from "./utils";
 import {ScrollTop} from "primereact/scrolltop";
 import { Dropdown } from 'primereact/dropdown';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { Avatar } from 'primereact/avatar';
 import { PanelMenu } from 'primereact/panelmenu';
 import { Toast } from 'primereact/toast';
+import {Link, useNavigate} from 'react-router-dom';
+import {redirect} from "react-router-dom";
+import ShowResults from "./userPages/serchRez";
+
+
+function GetBookHeaders(value){
+    const navigate = useNavigate();
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    // настройка и отправка AJAX-запроса на сервер
+    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
+    request.open("POST", "http://localhost:5257/books/searchbytitle");
+
+    // передача на сервер в параметрах формы
+    let body = new FormData();
+    body.append("title", value);
+
+    // callBack, работающий по окончании запроса
+    request.onload = function () {
+        // если запрос завершен и завершен корректно вывести полученные от сервера данные
+        if (request.status >= 200 && request.status <= 399) {
+            let books = JSON.parse(request.responseText);
+            /*window.location.replace('http://localhost:3000/booksearch');*/
+            navigate('/booksearch',{state:{books:books}});
+        } // if
+    } // callBack
+
+    // собственно отправка запроса
+    request.send(body);
+
+}
 
 // вывод строки для поиска книг
 function ShowSearchField(){
     const [value, setValue] = useState('');
     const [items, setItems] = useState([]);
 
+
     // получаем название книг
     let booksName = GetArrayByUrl('http://localhost:5257/books/get').map(item => item.title);
 
-    // заполняем подсказки для пользователя
+    // заполняем подсказки для пользователя (регистронезависимый и ищет все схождения в названии)
     const search = (event) => {
-        setItems([...booksName.values()].filter(item => item.toLowerCase()
-                                                            .contain(event.query.toLowerCase())));
+        setItems([...booksName.values()].filter(item => item.toString()
+                                                            .toLowerCase()
+                                                            .includes(event.query.toLowerCase())));
     };
+
+
 
     // передаём для отрисовки разметку
     return (
@@ -35,7 +71,14 @@ function ShowSearchField(){
                           suggestions={items}
                           completeMethod={search}
                           onChange={(e) => isUndefined(e) ? console.log(e) : setValue(e.value)}
-                          style={{fontSize: '11pt', height: '40px'}}/>
+                          style={{fontSize: '11pt', height: '40px'}}
+                          onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                  // ищем книги по названию
+                                  GetBookHeaders(value);
+                              }
+                          }}
+                          />
             <label htmlFor="ac"
                    style={{fontSize: '11pt', marginTop: '-7px'}}>
                 Введите название книги
@@ -178,7 +221,7 @@ function App() {
                 </div>
                 <div className="header-title">Прочитай<span>ка</span></div>
                 <div className="profile">
-                    <Avatar image={require('./img/Neet.jpg')}
+                    <Avatar icon="pi pi-user"
                             size="large"
                             className="user-profile"
                             shape="circle" />
