@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {StrictMode} from 'react';
 import '../index.css';
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import App from '../App';
@@ -189,9 +189,9 @@ function ShowYearBooks() {
 export default function Home(){
     return (
         <div className="book-store">
-            <React.StrictMode>
+            <StrictMode>
                 <App/>
-            </React.StrictMode>
+            </StrictMode>
 
             <MyCarousel/>
 

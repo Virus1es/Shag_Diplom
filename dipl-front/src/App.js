@@ -1,24 +1,22 @@
 import './styles/index.css';
 import 'primeicons/primeicons.css';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Sidebar} from 'primereact/sidebar';
 import { AutoComplete } from "primereact/autocomplete";
 import {isUndefined} from "swr/_internal";
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
-import {GetArrayByUrl, GetArrayByUrlWithHeaders} from "./utils";
+import {GetArrayByUrl} from "./utils";
 import {ScrollTop} from "primereact/scrolltop";
 import { Dropdown } from 'primereact/dropdown';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { Avatar } from 'primereact/avatar';
 import { PanelMenu } from 'primereact/panelmenu';
 import { Toast } from 'primereact/toast';
-import {Link, useNavigate} from 'react-router-dom';
-import {redirect} from "react-router-dom";
-import ShowResults from "./userPages/serchRez";
+import {BooksContext} from "./Context.js";
+import {useNavigate} from "react-router-dom";
 
 
-function GetBookHeaders(value){
-    const navigate = useNavigate();
+function GetBookHeaders(searchType, value, searchBooksFunc){
     // XNLHttpRequest это и есть реализация AJAX в JavaScript
     let request = new XMLHttpRequest();
 
@@ -28,28 +26,29 @@ function GetBookHeaders(value){
 
     // передача на сервер в параметрах формы
     let body = new FormData();
-    body.append("title", value);
+    body.append("type", searchType);
+    body.append(searchType, value);
 
     // callBack, работающий по окончании запроса
     request.onload = function () {
         // если запрос завершен и завершен корректно вывести полученные от сервера данные
         if (request.status >= 200 && request.status <= 399) {
             let books = JSON.parse(request.responseText);
-            /*window.location.replace('http://localhost:3000/booksearch');*/
-            navigate('/booksearch',{state:{books:books}});
+            searchBooksFunc(books);
         } // if
     } // callBack
 
     // собственно отправка запроса
     request.send(body);
-
 }
 
 // вывод строки для поиска книг
 function ShowSearchField(){
     const [value, setValue] = useState('');
     const [items, setItems] = useState([]);
+    const navigate = useNavigate();
 
+    const { searchBooks } = useContext(BooksContext);
 
     // получаем название книг
     let booksName = GetArrayByUrl('http://localhost:5257/books/get').map(item => item.title);
@@ -61,11 +60,10 @@ function ShowSearchField(){
                                                             .includes(event.query.toLowerCase())));
     };
 
-
-
     // передаём для отрисовки разметку
     return (
         <span className="p-float-label search">
+
             <AutoComplete inputId="ac"
                           value={value}
                           suggestions={items}
@@ -75,7 +73,8 @@ function ShowSearchField(){
                           onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                   // ищем книги по названию
-                                  GetBookHeaders(value);
+                                  GetBookHeaders("title", value, searchBooks);
+                                  navigate('/booksearch');
                               }
                           }}
                           />
@@ -91,7 +90,6 @@ function ShowSearchField(){
 function ShowMenu() {
     const [visible, setVisibleSlidebar] = useState(false);
     const toast = useRef(null);
-
 
     const items = [
         {
@@ -199,6 +197,17 @@ function ShowMenu() {
 function App() {
     const [selectedGener, setSelectedGener] = useState(null);
     const geners = GetArrayByUrl('http://localhost:5257/genres/get');
+    const navigate = useNavigate();
+
+    const { searchBooks } = useContext(BooksContext);
+
+    useEffect(() => {
+        if(selectedGener !== null) {
+            GetBookHeaders("genre", selectedGener.genreName, searchBooks);
+            console.log(selectedGener.genreName);
+            navigate('/booksearch');
+        }
+    }, [selectedGener]);
 
     return (
         <div className="App">
@@ -212,7 +221,8 @@ function App() {
                                       options={geners}
                                       optionLabel="genreName"
                                       placeholder="Выбирите жанр для поиска"
-                                      className="w-full md:w-14rem" />
+                                      className="w-full md:w-14rem"
+                                      />
                         </SplitterPanel>
                         <SplitterPanel className="flex align-items-center justify-content-center">
                             <ShowSearchField/>

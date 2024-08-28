@@ -1,26 +1,25 @@
-import React, {useRef} from 'react';
+import React, {useContext, useRef} from 'react';
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import {Tag} from "primereact/tag";
 import {Rating} from "primereact/rating";
 import App from "../App";
 import { DataView } from 'primereact/dataview';
-import {useLocation} from 'react-router-dom';
 import {isUndefined} from "swr/_internal";
 import {Toast} from "primereact/toast";
+import Context, {BooksContext} from "../Context";
 
 function ShowResults(){
     const toast = useRef(null);
-    const location = useLocation();
-
-    console.log('Новое: '+location.state.books);
-
-    if(isUndefined(location.state.books) || location.state.books === []) {
+/*
+    if (isUndefined(books) || books === []) {
         toast.current
-            .show({ severity: 'error',
+            .show({
+                severity: 'error',
                 summary: 'Упс :(',
                 detail: 'Книг с таким названием не найдено',
-                life: 3000 });
-    }
+                life: 3000
+            });
+    }*/
 
     const itemTemplate = (book) => {
         return (
@@ -75,6 +74,8 @@ function ShowResults(){
         return <div className="grid grid-nogutter">{list}</div>;
     };
 
+    const {books} = useContext(BooksContext);
+
     return (
         <>
             <React.StrictMode>
@@ -83,7 +84,7 @@ function ShowResults(){
             <Toast ref={toast} />
 
             <div className="card" style={{ margin: '50px 10px'}}>
-                <DataView value={location.state.books}
+                <DataView value={books}
                           listTemplate={listTemplate}
                           layout="grid"
                           paginator rows={5}/>
@@ -91,6 +92,5 @@ function ShowResults(){
         </>
     )
 }
-
 
 export default ShowResults;
