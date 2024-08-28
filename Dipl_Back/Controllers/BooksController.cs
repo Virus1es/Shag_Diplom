@@ -20,8 +20,17 @@ public class BooksController(BooksContext context) : Controller
 
     // поиск книг
     [HttpPost]
-    public JsonResult SearchByTitle([FromForm] string Title) => 
-        new(_db.Books.Where(b => b.Title.Contains(Title)).ToList());
+    public JsonResult SearchByTitle([FromForm] string type, [FromForm] string? Title, [FromForm] string? Genre)
+    {
+        List<Book> rez = type switch
+        {
+            "title" => _db.Books.Where(b => b.Title.Contains(Title)).ToList(),
+            "genre" => _db.Books.Where(b => b.IdGenreNavigation.GenreName.Contains(Genre)).ToList(),
+            _ => []
+        };
+
+        return new(rez);
+    }
 
     // получение данных из процедуры SelectAmountBooksSales
     [HttpGet]
