@@ -14,7 +14,6 @@ const reducer = (books, action) => {
 export default function Context(props) {
     const [books, dispatch] = useReducer(reducer, []);
 
-
     const searchBooks = (books) => {
         dispatch({ type: "SEARCH", payload: books });
     };

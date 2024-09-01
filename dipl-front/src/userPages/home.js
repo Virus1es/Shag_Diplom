@@ -1,12 +1,12 @@
-import React, {StrictMode} from 'react';
+import React, {useContext, useEffect} from 'react';
 import '../index.css';
-import 'primereact/resources/themes/lara-light-cyan/theme.css';
-import App from '../App';
 import Flickity from "react-flickity-component";
-import {checkPatronymic, GetArrayByUrl} from "../utils";
+import {checkPatronymic, GetArrayByUrl, PostBooksWithHeaders, PrintBookCard} from "../utils";
 import {Tag} from 'primereact/tag';
 import {Rating} from "primereact/rating";
 import { Chip } from 'primereact/chip';
+import {BooksContext} from "../Context";
+import {useNavigate} from "react-router-dom";
 
 
 const flickityOptions = {
@@ -76,6 +76,7 @@ function MyCarousel() {
         </div>
     )
 }
+
 /*
 <fieldset className="rating yellow">
     <input type="checkbox" id={"star" + (book.id * 5 + 5).toString()} name="rating"
@@ -98,48 +99,24 @@ function MyCarousel() {
 
 // вывод популярных книг в определённом жанре или из всех жанров
 function ShowBooksByGenre() {
+    // получаем функцию присвоения книг в контекст
+    const {books,  searchBooks } = useContext(BooksContext);
+    // используется для redirect в коде
+    const navigate = useNavigate();
+
     // получение книг с сервера
-    let books = GetArrayByUrl('http://localhost:5257/books/get');
+    const booksfor = GetArrayByUrl('http://localhost:5257/books/get');
+
+    useEffect(() => {
+        if(books.length !== 0) navigate('/book');
+    }, [books]);
 
     // заполнение массива разметкой
-    return (books.map((book) => {
-            return (
-                <div className="book-card">
-                    <div className="content-wrapper">
-                        <img src={require('../img/books/' + book.bookImage)}
-                             alt={book.title}
-                             className="book-card-img"/>
-                        <div className="card-content">
-                            <div className="book-name">{book.title}</div>
-                            <div className="book-by">
-                                {book.idAuthorNavigation.firstName} {book.idAuthorNavigation.patronymic} {book.idAuthorNavigation.surname}
-                            </div>
-                            <div className="genre-tag">
-                                <Tag severity="info" value={book.idGenreNavigation.genreName} rounded></Tag>
-                            </div>
-                            <div className="rate">
-                                <div className="stars">
-                                    <Rating value={book.rating}
-                                            readOnly
-                                            cancel={false}
-                                            tooltip={"Текущая оценка: " + book.rating.toFixed(2)}
-                                            tooltipOptions={{mouseTrack: true, style: {fontSize: 14}}}/>
-                                </div>
-                                <span className="book-voters">Оценок: {book.amountRatings} </span>
-                            </div>
-                            <div className="book-sum card-sum">
-                                {book.bookDescription}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="likes">
-                        <div className="like-name">
-                            <span>Цена: </span> {book.price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+    return (booksfor.map((book) =>
+        <div onClick={() => PostBooksWithHeaders("http://localhost:5257/books/search",
+                                                 "id", book.id, searchBooks)}>
+            {PrintBookCard(book)}
+        </div>
     ))
 }
 
@@ -189,10 +166,6 @@ function ShowYearBooks() {
 export default function Home(){
     return (
         <div className="book-store">
-            <StrictMode>
-                <App/>
-            </StrictMode>
-
             <MyCarousel/>
 
             <div className="main-wrapper">

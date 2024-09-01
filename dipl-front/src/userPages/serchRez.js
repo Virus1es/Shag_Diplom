@@ -1,69 +1,21 @@
-import React, {useContext, useRef} from 'react';
-import 'primereact/resources/themes/lara-light-cyan/theme.css';
-import {Tag} from "primereact/tag";
-import {Rating} from "primereact/rating";
-import App from "../App";
+import React, {useContext, useEffect, useRef} from 'react';
 import { DataView } from 'primereact/dataview';
-import {isUndefined} from "swr/_internal";
 import {Toast} from "primereact/toast";
-import Context, {BooksContext} from "../Context";
+import {BooksContext} from "../Context";
+import {PrintBookCard} from "../utils";
 
 function ShowResults(){
     const toast = useRef(null);
-/*
-    if (isUndefined(books) || books === []) {
-        toast.current
-            .show({
-                severity: 'error',
-                summary: 'Упс :(',
-                detail: 'Книг с таким названием не найдено',
-                life: 3000
-            });
-    }*/
 
+    // шаблоны вывода каждого элемента(книги)
     const itemTemplate = (book) => {
         return (
-            <div className="col-12 sm:col-6 lg:col-12 xl:col-4 p-2" key={book.id}>
-                <div className="book-card">
-                    <div className="content-wrapper">
-                        <img src={require('../img/books/' + book.bookImage)}
-                             alt={book.title}
-                             className="book-card-img"/>
-                        <div className="card-content">
-                            <div className="book-name">{book.title}</div>
-                            <div className="book-by">
-                                {book.idAuthorNavigation.firstName} {book.idAuthorNavigation.patronymic} {book.idAuthorNavigation.surname}
-                            </div>
-                            <div className="genre-tag">
-                                <Tag severity="info" value={book.idGenreNavigation.genreName} rounded></Tag>
-                            </div>
-                            <div className="rate">
-                                <div className="stars">
-                                    <Rating value={book.rating}
-                                            readOnly
-                                            cancel={false}
-                                            tooltip={"Текущая оценка: " + book.rating.toFixed(2)}
-                                            tooltipOptions={{mouseTrack: true, style: {fontSize: 14}}}/>
-                                </div>
-                                <span className="book-voters">Оценок: {book.amountRatings} </span>
-                            </div>
-                            <div className="book-sum card-sum">
-                                {book.bookDescription}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="likes">
-                        <div className="like-name">
-                            <span>Цена: </span> {book.price.toLocaleString('ru-RU', {
-                            style: 'currency',
-                            currency: 'RUB'
-                        })}
-                        </div>
-                    </div>
-                </div>
+            <div className="sm:col-12 lg:col-6 xl:col-6 p-3">
+                {PrintBookCard(book)}
             </div>);
     };
 
+    // вывод итогового списка
     const listTemplate = (items) => {
         if (!items || items.length === 0) return null;
 
@@ -75,19 +27,32 @@ function ShowResults(){
     };
 
     const {books} = useContext(BooksContext);
+    // вывод сообщения в случае пустого результата
+    useEffect(() => {
+        // убираем предыдущее сообщение
+        toast.current.clear();
+
+        // если результат - пустой массив, выводим сообщение об этом
+        if(books.length === 0){
+            toast.current.show(
+                {
+                    severity: 'error',
+                    summary: 'Упс :(',
+                    detail: 'Таких книг не найдено'
+                }
+            );
+        }
+    }, [books]);
 
     return (
         <>
-            <React.StrictMode>
-                <App/>
-            </React.StrictMode>
-            <Toast ref={toast} />
-
             <div className="card" style={{ margin: '50px 10px'}}>
                 <DataView value={books}
                           listTemplate={listTemplate}
                           layout="grid"
-                          paginator rows={5}/>
+                          paginator rows={5}
+                          alwaysShowPaginator={false}/>
+                <Toast ref={toast} />
             </div>
         </>
     )
