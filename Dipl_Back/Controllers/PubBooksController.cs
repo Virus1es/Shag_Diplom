@@ -16,6 +16,11 @@ public class PubBooksController(BooksContext context) : Controller
     [HttpGet]
     public JsonResult Get() => new(_db.PubBooks.ToList());
 
+    // получить все издательства книги по Id
+    [HttpPost]
+    public JsonResult SearchPubsById([FromForm] int id) => 
+        new(_db.PubBooks.Where(p => p.IdBook == id).ToList());
+
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
     public string Post([FromForm] int id, [FromForm] int IdBook, [FromForm] int IdHouse)

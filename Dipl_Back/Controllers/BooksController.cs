@@ -20,10 +20,12 @@ public class BooksController(BooksContext context) : Controller
 
     // поиск книг
     [HttpPost]
-    public JsonResult SearchByTitle([FromForm] string type, [FromForm] string? Title, [FromForm] string? Genre)
+    public JsonResult Search([FromForm] string type, [FromForm] int? Id,
+                             [FromForm] string? Title, [FromForm] string? Genre)
     {
         List<Book> rez = type switch
         {
+            "id"    => _db.Books.Where(b => b.Id == Id).ToList(),
             "title" => _db.Books.Where(b => b.Title.Contains(Title)).ToList(),
             "genre" => _db.Books.Where(b => b.IdGenreNavigation.GenreName.Contains(Genre)).ToList(),
             _ => []
