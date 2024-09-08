@@ -156,7 +156,7 @@ function ShowMenu() {
                      onHide={() => setVisibleSlidebar(false)}>
                 <div>
                     <PanelMenu model={items}
-                               className="w-full md:w-20rem"/>
+                               className="w-full md:w-17rem"/>
                 </div>
             </Sidebar>
             <Toast ref={toast} />
@@ -217,7 +217,8 @@ export default function ShowUpperBar(){
                     <Avatar icon="pi pi-user"
                             size="large"
                             className="user-profile"
-                            shape="circle" />
+                            shape="circle"
+                            onClick={() => navigate('/login')}/>
                     <ShowMenu/>
                 </div>
             </div>

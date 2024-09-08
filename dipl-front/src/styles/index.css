@@ -522,6 +522,7 @@ h1 {
 .year-book {
     display: flex;
     align-items: center;
+    cursor: pointer;
     & + & {
         margin-top: 20px;
     }

@@ -1,12 +1,14 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {BooksContext} from "../Context";
 import {Tag} from "primereact/tag";
 import {Rating} from "primereact/rating";
 import { Image } from 'primereact/image';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
-import {PostBooksWithHeaders} from "../utils";
+import { Badge } from 'primereact/badge';
+import { Tooltip } from 'primereact/tooltip';
 import {useCookies} from "react-cookie";
+import {useNavigate} from "react-router-dom";
 
 function GetPubsByBook(searchType, value, setFunc) {
     // XNLHttpRequest это и есть реализация AJAX в JavaScript
@@ -35,19 +37,24 @@ function GetPubsByBook(searchType, value, setFunc) {
 }
 
 export default function ShowBook(){
+    // использование контекста для передачи выбранной книги
     const {books} = useContext(BooksContext);
 
-    const [cookies, setCookie, removeCookie] = useCookies(['pubs']);
+    // используется для redirect в коде
+    const navigate = useNavigate();
+
+    // cookie нужные для выделения текущих публикаций книги
+    const [cookies, setCookie] = useCookies(['pubs']);
 
     let book = books[0];
 
-    const [selectPub, setSelectPub] = useState(null);
+    // действия пометки обработки запроса
     const [loadingCart, setLoadingCart] = useState(false);
     const [loadingSave, setLoadingSave] = useState(false);
 
-
+    // получение всех публикаций книги
     GetPubsByBook("id", book.id, setCookie);
-
+    
     const loadCart = () => {
         setLoadingCart(true);
 
@@ -64,7 +71,19 @@ export default function ShowBook(){
         }, 2000);
     };
 
-    // let pubs = cookies.pubs.map((pub) => pub.idHouseNavigation);
+    // переменная - выбранная публикация
+    const [selectPub, setSelectPub] = useState(null);
+    // переменная - наценка за издательство
+    const [addPrice, setAddPrice] = useState(0);
+    const [disStat, setDisStat] = useState(true);
+
+    // меняем наценку в зависимости от издательства
+    useEffect(() => {
+        if(selectPub !== null) {
+            setDisStat(false);
+            setAddPrice((book.price * selectPub.idHouseNavigation.addPercent / 100));
+        }
+    }, [selectPub]);
 
     return (
         <div className="grid grid-nogutter">
@@ -106,19 +125,24 @@ export default function ShowBook(){
                               onChange={(e) => setSelectPub(e.value)}
                               options={cookies.pubs}
                               optionLabel="idHouseNavigation.name"
-                              placeholder="Select a City"
-                              className="w-full md:w-14rem"
+                              placeholder="Выбирите издателя"
+                              className="w-full md:w-15rem my-2"
                               checkmark={true}
-                              highlightOnSelect={false} />
+                              highlightOnSelect={false}/>
                 </div>
 
                 <div className="flex flex-wrap justify-content-end">
-                    <div className="my-2 text-2xl">
-                        Цена: <b>{book.price.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}</b>
-                        <b className="text-sm">
-                            +
-                            {(book.price * cookies.pubs[0].idHouseNavigation.addPercent / 100).toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}
-                            (Наценка издателя)
+                    <div className="my-2 mx-4 text-2xl">
+                        Цена:
+                        <b className="p-overlay-badge pt-2">
+                            {book.price.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}
+                            <Tooltip target=".pub-add-price" position="left"/>
+                            <Badge
+                                className="pub-add-price"
+                                value={addPrice.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}
+                                severity="info"
+                                data-pr-tooltip="Наценка издателя"
+                            ></Badge>
                         </b>
                     </div>
                 </div>
@@ -130,12 +154,22 @@ export default function ShowBook(){
                                 loading={loadingCart}
                                 onClick={loadCart}
                                 className="col-auto m-1 text-2xl"
+                                disabled={disStat}
+                                tooltip="Выбирите издательство"
+                                tooltipOptions={{position: 'left',
+                                                 showOnDisabled: true,
+                                                 disabled: !disStat}}
                         />
                         <Button icon="pi pi-bookmark"
                                 loading={loadingSave}
                                 onClick={loadSave}
                                 className="col-fixed m-1"
                                 style={{width: '50px'}}
+                                disabled={disStat}
+                                tooltip="Выбирите издательство"
+                                tooltipOptions={{position: 'left',
+                                                 showOnDisabled: true,
+                                                 disabled: !disStat}}
                         />
                     </div>
                 </div>

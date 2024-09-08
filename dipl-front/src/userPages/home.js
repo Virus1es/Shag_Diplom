@@ -14,13 +14,51 @@ const flickityOptions = {
     wrapAround: true
 }
 
+export function TestRegister(){
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    // настройка и отправка AJAX-запроса на сервер
+    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
+    // "http://localhost:5257/books/search"
+    request.open("POST", "http://localhost:5257/register");
+
+    // передача на сервер в параметрах формы
+    let body = new FormData();
+    // body.append("username", 'username');
+    body.append("email", "string@string.com");
+    body.append("password", "12345678");
+
+    // callBack, работающий по окончании запроса
+    request.onload = function () {
+        // если запрос завершен и завершен корректно вывести полученные от сервера данные
+        if (request.status >= 200 && request.status <= 399) {
+            let value = JSON.parse(request.responseText);
+            console.log("Из регистрации получил: " + value);
+        } // if
+    } // callBack
+
+    // собственно отправка запроса
+    request.send(body);
+}
+
+
 // вывод книг в верхней части экрана
 // м.б. будут новинки
 function ShowUpperBooks() {
-    // получение книг с сервера
-    let books = GetArrayByUrl('http://localhost:5257/books/get');
+    // получаем функцию присвоения книг в контекст
+    const {books,  searchBooks } = useContext(BooksContext);
+    // используется для redirect в коде
+    const navigate = useNavigate();
 
-    return (books.slice(0, 5).map((book) => {
+    // получение книг с сервера
+    let booksUp = GetArrayByUrl('http://localhost:5257/books/get');
+
+    useEffect(() => {
+        if(books.length !== 0) navigate('/book');
+    }, [books]);
+
+    return (booksUp.slice(0, 5).map((book) => {
             return (
                 <div className="book-cell">
                     <div className="book-img">
@@ -49,7 +87,11 @@ function ShowUpperBooks() {
                         <div className="book-sum">
                             {book.bookDescription}
                         </div>
-                        <div className="book-see">Подробнее</div>
+                        <div className="book-see"
+                             onClick={() =>  {PostBooksWithHeaders("http://localhost:5257/books/search",
+                                                                   "id", book.id, searchBooks)}}>
+                            Подробнее
+                        </div>
                     </div>
                 </div>
             )
@@ -142,12 +184,24 @@ function ShowWeekAuthors() {
 
 // вывод книг популярных в этом году
 function ShowYearBooks() {
-    let books = GetArrayByUrl('http://localhost:5257/books/popular').slice(0, 5);
+    // получаем функцию присвоения книг в контекст
+    const {books,  searchBooks } = useContext(BooksContext);
+    // используется для redirect в коде
+    const navigate = useNavigate();
+
+    let booksPop = GetArrayByUrl('http://localhost:5257/books/popular').slice(0, 5);
+
+    useEffect(() => {
+        if(books.length !== 0) navigate('/book');
+    }, [books]);
 
     // заполнение массива разметкой
-    return (books.map((book) => {
+    return (booksPop.map((book) => {
         return (
-            <div className="year-book">
+            <div className="year-book"
+                 onClick={() => {PostBooksWithHeaders("http://localhost:5257/books/search",
+                                                     "id", book.id, searchBooks); console.log("Пытаюсь!")}}
+            >
                 <img src={require('../img/books/' + book.bookImage)}
                      alt={book.title}
                      className="year-book-img"/>
@@ -164,6 +218,7 @@ function ShowYearBooks() {
 }
 
 export default function Home(){
+    TestRegister();
     return (
         <div className="book-store">
             <MyCarousel/>

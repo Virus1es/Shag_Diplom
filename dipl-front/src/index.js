@@ -10,6 +10,8 @@ import ShowResults from "./userPages/serchRez"
 import Context from "./Context";
 import App from "./App";
 import ShowBook from "./userPages/book";
+import ShowLogin from "./userPages/login";
+import ShowRegister from "./userPages/register";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -25,6 +27,8 @@ root.render(
                 <Route path="/stores" element={<ShowStores/>} />
                 <Route path="/booksearch" element={<ShowResults/>} />
                 <Route path="/book" element={<ShowBook/>} />
+                <Route path="/login" element={<ShowLogin/>} />
+                <Route path="/registration" element={<ShowRegister/>} />
             </Routes>
         </BrowserRouter>
     </Context>
