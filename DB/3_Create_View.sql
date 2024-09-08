@@ -5,7 +5,7 @@ DROP VIEW IF EXISTS dbo.BooksOnWarehouseView;
 DROP VIEW IF EXISTS dbo.BooksWithFullPriceView;
 go
 
--- создание представления Книги на складе
+-- СЃРѕР·РґР°РЅРёРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ РљРЅРёРіРё РЅР° СЃРєР»Р°РґРµ
 create or alter view BooksOnWarehouseView with schemabinding as
 select
 	IdPubBook
@@ -32,7 +32,7 @@ go
 select * from BooksOnWarehouseView;
 go
 
--- создание представления Книги с издаельствами с вычисляемым полем стоимость
+-- СЃРѕР·РґР°РЅРёРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ РљРЅРёРіРё СЃ РёР·РґР°РµР»СЊСЃС‚РІР°РјРё СЃ РІС‹С‡РёСЃР»СЏРµРјС‹Рј РїРѕР»РµРј СЃС‚РѕРёРјРѕСЃС‚СЊ
 create or alter view BooksWithFullPriceView with schemabinding as
 select
 	Books.Title

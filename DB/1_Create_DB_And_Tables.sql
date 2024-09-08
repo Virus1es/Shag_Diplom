@@ -4,7 +4,7 @@ go
 use master 
 go
 
--- при отсутствии БД создать ее
+-- РїСЂРё РѕС‚СЃСѓС‚СЃС‚РІРёРё Р‘Р” СЃРѕР·РґР°С‚СЊ РµРµ
 if db_id('Diploming_DB') is null
 begin
 	create database Diploming_DB on (
@@ -17,94 +17,94 @@ begin
 	);
 end
 else begin
-print 'БД уже есть на сервере'
+print 'Р‘Р” СѓР¶Рµ РµСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ'
 end;
 go
 
 use Diploming_DB;
 go
 
--- удаление существующих вариантов таблиц
+-- СѓРґР°Р»РµРЅРёРµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… РІР°СЂРёР°РЅС‚РѕРІ С‚Р°Р±Р»РёС†
 begin transaction;
 print '';
-print 'Удаление существующих таблиц:';
+print 'РЈРґР°Р»РµРЅРёРµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… С‚Р°Р±Р»РёС†:';
 print '';
 
--- удалить старый вариант таблицы Sales(Продажи)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Sales(РџСЂРѕРґР°Р¶Рё)
 if OBJECT_ID('Sales') is not null begin
 	drop table Sales;
-	print 'Удалена таблица Sales';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Sales';
 end;
 
--- удалить старый вариант таблицы Purchases(Закупки)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Purchases(Р—Р°РєСѓРїРєРё)
 if OBJECT_ID('Purchases') is not null begin
 	drop table Purchases;
-	print 'Удалена таблица Purchases';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Purchases';
 end;
 
--- удалить старый вариант таблицы PubBooks(Книги с издательствами)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ PubBooks(РџСѓР±Р»РёРєР°С†РёРё РєРЅРёРі)
 if OBJECT_ID('PubBooks') is not null begin
 	drop table PubBooks;
-	print 'Удалена таблица PubBooks';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° PubBooks';
 end;
 
--- удалить старый вариант таблицы Books(Книги)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Books(РљРЅРёРіРё)
 if OBJECT_ID('Books') is not null begin
 	drop table Books;
-	print 'Удалена таблица Books';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Books';
 end;
 
--- удалить старый вариант таблицы Stores(Магазины)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Stores(РњР°РіР°Р·РёРЅС‹)
 if OBJECT_ID('Stores') is not null begin
 	drop table Stores;
-	print 'Удалена таблица Stores';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Stores';
 end;
 
--- удалить старый вариант таблицы Streets(Улицы)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Streets(РЈР»РёС†С‹)
 if OBJECT_ID('Streets') is not null begin
 	drop table Streets;
-	print 'Удалена таблица Streets';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Streets';
 end;
 
--- удалить старый вариант таблицы Genres(Жанры)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Genres(Р–Р°РЅСЂС‹)
 if OBJECT_ID('Genres') is not null begin
 	drop table Genres;
-	print 'Удалена таблица Genres';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Genres';
 end;
 
--- удалить старый вариант таблицы Authors(Авторы)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Authors(РђРІС‚РѕСЂС‹)
 if OBJECT_ID('Authors') is not null begin
 	drop table Authors;
-	print 'Удалена таблица Authors';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Authors';
 end;
 
--- удалить старый вариант таблицы PublishingHouses(Издательства)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ PublishingHouses(РР·РґР°С‚РµР»СЊСЃС‚РІР°)
 if OBJECT_ID('PublishingHouses') is not null begin
 	drop table PublishingHouses;
-	print 'Удалена таблица PublishingHouses';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° PublishingHouses';
 end;
 
--- удалить старый вариант таблицы Cities(Города)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Cities(Р“РѕСЂРѕРґР°)
 if OBJECT_ID('Cities') is not null begin
 	drop table Cities;
-	print 'Удалена таблица Cities';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Cities';
 end;
 
--- удалить старый вариант таблицы Providers(Поставщики)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ Providers(РџРѕСЃС‚Р°РІС‰РёРєРё)
 if OBJECT_ID('Providers') is not null begin
 	drop table Providers;
-	print 'Удалена таблица Providers';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° Providers';
 end;
 
--- удалить старый вариант таблицы AgeRestrictions(Возрастные ограничения)
+-- СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚ С‚Р°Р±Р»РёС†С‹ AgeRestrictions(Р’РѕР·СЂР°СЃС‚РЅС‹Рµ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ)
 if OBJECT_ID('AgeRestrictions') is not null begin
 	drop table AgeRestrictions;
-	print 'Удалена таблица AgeRestrictions';
+	print 'РЈРґР°Р»РµРЅР° С‚Р°Р±Р»РёС†Р° AgeRestrictions';
 end;
 
 
--- Если осталась хотя бы одна таблица, откатить
--- транзакцию
+-- Р•СЃР»Рё РѕСЃС‚Р°Р»Р°СЃСЊ С…РѕС‚СЏ Р±С‹ РѕРґРЅР° С‚Р°Р±Р»РёС†Р°, РѕС‚РєР°С‚РёС‚СЊ
+-- С‚СЂР°РЅР·Р°РєС†РёСЋ
 if object_id('Genres') is not null  or 
    object_id('Providers') is not null  or 
    object_id('AgeRestrictions') is not null  or 
@@ -120,7 +120,7 @@ if object_id('Genres') is not null  or
    rollback transaction
    
    print ''
-   print 'Не все таблицы удалены'
+   print 'РќРµ РІСЃРµ С‚Р°Р±Р»РёС†С‹ СѓРґР°Р»РµРЅС‹'
    print ''
 
    set noexec on;
@@ -128,195 +128,195 @@ end else begin
    commit transaction;
    
    print ''
-   print 'Удаление таблиц завершено'
+   print 'РЈРґР°Р»РµРЅРёРµ С‚Р°Р±Р»РёС† Р·Р°РІРµСЂС€РµРЅРѕ'
    print ''
 end;
 
 
 begin transaction
 
--- создание таблицы Возрастные ограничения
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ Р’РѕР·СЂР°СЃС‚РЅС‹Рµ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ
 create table AgeRestrictions (
-     Id        int          not null identity(1, 1),  -- для автоинкремента
-	 AgeRange nvarchar(4)   not null,                 -- возрастное ограничение
+     Id        int          not null identity(1, 1),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 AgeRange nvarchar(4)   not null,                 -- РІРѕР·СЂР°СЃС‚РЅРѕРµ РѕРіСЂР°РЅРёС‡РµРЅРёРµ
 	 
 	 constraint AgeRestrictions_PK primary key (Id)
 );
 go
 
--- создание таблицы Жанры
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ Р–Р°РЅСЂС‹
 create table Genres (
-     Id        int          not null identity(1, 1),  -- для автоинкремента
-	 GenreName nvarchar(50) not null,                 -- название жанра книги
+     Id        int          not null identity(1, 1),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 GenreName nvarchar(50) not null,                 -- РЅР°Р·РІР°РЅРёРµ Р¶Р°РЅСЂР°
 	 
 	 constraint Genres_PK primary key (Id)
 );
 go
 
 
--- создание таблицы Авторы
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РђРІС‚РѕСЂС‹
 create table Authors (
-     Id         int          not null identity(1, 1),  -- для автоинкремента
-	 FirstName  nvarchar(50) not null,                 -- имя автора
-	 Surname    nvarchar(50) not null,                 -- фамилия автора
-	 Patronymic nvarchar(50) null,                     -- отчество автора
+     Id         int          not null identity(1, 1),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 FirstName  nvarchar(50) not null,                 -- РёРјСЏ Р°РІС‚РѕСЂР°
+	 Surname    nvarchar(50) not null,                 -- С„Р°РјРёР»РёСЏ
+	 Patronymic nvarchar(50) null,                     -- РѕС‚С‡РµСЃС‚РІРѕ
 	 
 	 constraint Authors_PK primary key (Id)
 );
 go
 
 
--- создание таблицы Издательства
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РР·РґР°С‚РµР»СЊСЃС‚РІР°
 create table PublishingHouses (
-     Id         int          not null identity(1, 1),  -- для автоинкремента
-	 [Name]     nvarchar(50) not null,                 -- название издательства
-	 Phone      nvarchar(15) not null,                 -- контактный номер
-	 AddPercent float        not null,                 -- наценка за издательство в процентах
+     Id         int          not null identity(1, 1),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 [Name]     nvarchar(50) not null,                 -- РЅР°Р·РІР°РЅРёРµ
+	 Phone      nvarchar(15) not null,                 -- РєРѕРЅС‚Р°РєС‚РЅС‹Р№ РЅРѕРјРµСЂ
+	 AddPercent float        not null,                 -- РїСЂРѕС†РµРЅС‚ РЅР°РґР±Р°РІРєРё Р·Р° РёР·РґР°С‚РµР»СЊСЃС‚РІРѕ
 	 
 	 constraint PublishingHouses_PK primary key (Id),
-	 -- процент наценки за издательство должен быть в пределах от 0 до 100
+	 -- РїСЂРѕС†РµРЅС‚ РЅР°РґР±Р°РІРєРё РґРѕР»Р¶РµРЅ Р»РµР¶Р°С‚СЊ РІ РїСЂРµРґРµР»Р°С… РѕС‚ 0 РґРѕ 100
 	 constraint PublishingHouses_AddPercent_check check (AddPercent between 0.0 and 100.0)
 );
 go
 
--- создание таблицы Поставщики
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РџРѕСЃС‚Р°РІС‰РёРєРё
 create table Providers (
-     Id       int          not null identity(1, 1),  -- для автоинкремента
-	 [Name]   nvarchar(50) not null,                 -- название поставщика
-	 Phone    nvarchar(15) not null,                 -- контактный номер
+     Id       int          not null identity(1, 1),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 [Name]   nvarchar(50) not null,                 -- РЅР°Р·РІР°РЅРёРµ
+	 Phone    nvarchar(15) not null,                 -- РєРѕРЅС‚Р°РєС‚РЅС‹Р№ РЅРѕРјРµСЂ
 	 
 	 constraint Providers_PK primary key (Id)
 );
 go
 
 
--- создание таблицы Города
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ Р“РѕСЂРѕРґР°
 create table Cities (
-     Id       int          not null identity(1, 1),  -- для автоинкремента
-	 CityName nvarchar(50) not null,                 -- название города
+     Id       int          not null identity(1, 1),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 CityName nvarchar(50) not null,                 -- РЅР°Р·РІР°РЅРёРµ РіРѕСЂРѕРґР°
 	 
 	 constraint Cities_PK primary key (Id)
 );
 go
 
 
--- создание таблицы Улицы
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РЈР»РёС†С‹
 create table Streets (
-     Id        int           not null identity(1, 1),  -- для автоинкремента
-	 StreetName nvarchar(50) not null,                 -- название улицы
+     Id        int           not null identity(1, 1),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 StreetName nvarchar(50) not null,                 -- РЅР°Р·РІР°РЅРёРµ СѓР»РёС†С‹
 	 
 	 constraint Streets_PK primary key (Id)
 );
 go
 
 
--- создание таблицы Магазины
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РњР°РіР°Р·РёРЅС‹
 create table Stores (
-     Id       int          not null identity(1, 1) constraint Stores_PK primary key (Id),  -- для автоинкремента
-	 [Name]   nvarchar(50) not null,                 -- название магазина
-	 IdCity   int          not null,                 -- город размещения
-	 IdStreet int          not null,                 -- улица размещения
-	 HouseNum nvarchar(10) not null,                 -- дом размещения
+     Id       int          not null identity(1, 1) constraint Stores_PK primary key (Id),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 [Name]   nvarchar(50) not null,                 -- РЅР°Р·РІР°РЅРёРµ
+	 IdCity   int          not null,                 -- РіРѕСЂРѕРґ СЂР°Р·РјРµС‰РµРЅРёСЏ
+	 IdStreet int          not null,                 -- СѓР»РёС†Р° СЂР°Р·РјРµС‰РµРЅРёСЏ
+	 HouseNum nvarchar(10) not null,                 -- РґРѕРј СЂР°Р·РјРµС‰РµРЅРёСЏ
 	 
-	 -- связь с таблицей Города
+	 --СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ Р“РѕСЂРѕРґР°
 	 constraint FK_Stores_Cities foreign key(IdCity) references dbo.Cities(Id),
-	 -- связь с таблицей Улицы
+	 -- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ РЈР»РёС†С‹
 	 constraint FK_Stores_Streets foreign key(IdStreet) references dbo.Streets(Id)
 );
 go
 
--- создание таблицы Книги
-create table Books (
-     Id              int           not null identity(1, 1) constraint Books_PK primary key (Id),
-	 Title           nvarchar(100) not null,                 -- название книги
-	 BookImage       nvarchar(255) not null,                 -- имя файла с картинкой обложки книги
-	 IdAuthor        int           not null,                 -- автор
-	 IdGenre         int           not null,                 -- жанр книги
-	 IdAge           int           not null,                 -- возрастное ограничение
-	 Price           int           not null,                 -- стоимость книги
-	 CreationYear    int           not null,                 -- год издания книги
-	 AmountRatings   int           not null,                 -- количество оценок
-	 Rating          float         not null,                 -- рейтинг книги
-	 BookDescription nvarchar(500) not null,                 -- краткое описание книги
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РљРЅРёРіРё
+create table Books ( 
+     Id              int           not null identity(1, 1) constraint Books_PK primary key (Id), -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 Title           nvarchar(100) not null,                 -- РЅР°Р·РІР°РЅРёРµ
+	 BookImage       nvarchar(255) not null,                 -- РёРјСЏ С„Р°Р№Р»Р° СЃ РѕР±Р»РѕР¶РєРѕР№ РєРЅРёРіРё
+	 IdAuthor        int           not null,                 -- Р°РІС‚РѕСЂ
+	 IdGenre         int           not null,                 -- Р¶Р°РЅСЂ
+	 IdAge           int           not null,                 -- РІРѕР·СЂР°СЃС‚РЅРѕРµ РѕРіСЂР°РЅРёС‡РµРЅРёРµ
+	 Price           int           not null,                 -- С†РµРЅР° РєРЅРёРіРё
+	 CreationYear    int           not null,                 -- РіРѕРґ РЅР°РїРёСЃР°РЅРёСЏ
+	 AmountRatings   int           not null,                 -- С‡РёСЃР»Рѕ РїСЂРѕРіРѕР»РѕСЃРѕРІР°РІС€РёС…
+	 Rating          float         not null,                 -- СЂРµР№С‚РёРЅРі
+	 BookDescription nvarchar(500) not null,                 -- РєСЂР°СЃС‚РєРѕРµ РѕРїРёСЃР°РЅРёРµ РєРЅРёРіРё
 
-	 -- цена за книгу не может быть меньше 0
+	 -- Р¦РµРЅР° РєРЅРёРіРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµРЅСЊС€Рµ 0
 	 constraint Books_Price_check check (Price > 0),
-	 -- количество оценок не может быть меньше 0
+	 -- Р§РёСЃР»Рѕ РїСЂРѕРіРѕР»РѕСЃРѕРІР°РІС€РёС… РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµРЅСЊС€Рµ 0
 	 constraint Books_AmountRatings_check check (AmountRatings >= 0),
-	 -- рейтинг книги не должен быть отрицательным и не должен быть больше 5
+	 -- СЂРµР№С‚РёРЅРі РґРѕР»Р¶Рµ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РґРёР°РїРѕР·РѕРЅРµ [0;5]
 	 constraint Books_Rating_check check (Rating between 0.0 and 5.0),
-	 -- год создания книги не может быть больше текущего года или отрицательным
+	 -- РіРѕРґ РЅР°РїРёСЃР°РЅРёСЏ РєРЅРёРіРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј Рё Р±РѕР»СЊС€Рµ С‚РµРєСѓС‰РµРіРѕ РіРѕРґР°
 	 constraint Books_CreationYear_check check (CreationYear between 0 and Year(getdate())),
-	 -- связь с таблицей Авторы
+	 -- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ РђРІС‚РѕСЂС‹
 	 constraint FK_Books_Authors foreign key(IdAuthor) references dbo.Authors(Id),
-	 -- связь с таблицей Возрастные ограничения
+	 -- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ Р’РѕР·СЂР°СЃС‚РЅС‹Рµ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ
 	 constraint FK_Books_AgeRestrictions foreign key(IdAge) references dbo.AgeRestrictions(Id),
-	 -- связь с таблицей Жанры
+	 -- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ Р–Р°РЅСЂС‹
 	 constraint FK_Books_Genres foreign key(IdGenre) references dbo.Genres(Id)
 );
 go
 
--- создание таблицы Книги с издательствами
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РР·РґР°С‚РµР»СЊСЃС‚РІР° РєРЅРёРі
 create table PubBooks (
-     Id      int not null identity(1, 1) constraint PubBooks_PK primary key (Id),  -- для автоинкремента
-	 IdBook  int not null,                 -- книга
-	 IdHouse int not null,                 -- издательство книги
+     Id      int not null identity(1, 1) constraint PubBooks_PK primary key (Id),  -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 IdBook  int not null,                 -- РєРЅРёРіР°
+	 IdHouse int not null,                 -- РёР·РґР°С‚РµР»СЊСЃС‚РІРѕ
 	 
-	 -- связь с таблицей Книги
+	 -- СЃРІСЏР·СЊ СЃС‚Р°Р±Р»РёС†РµР№ РљРЅРёРіРё
 	 constraint FK_PubBooks_Books foreign key(IdBook) references dbo.Books(Id),
-	 -- связь с таблицей Издательства
+	 -- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ РР·РґР°С‚РµР»СЊСЃС‚РІР°
 	 constraint FK_PubBooks_PublishingHouses foreign key(IdHouse) references dbo.PublishingHouses(Id)
 );
 go
 
 
--- создание таблицы Закупки
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ Р—Р°РєСѓРїРєРё
 create table Purchases (
-     Id            int  not null identity(1, 1) constraint Purchases_PK primary key (Id),
-	 IdProvider    int  not null,         -- какой поставщик доставил книги
-	 IdPubBook     int  not null,         -- какую книгу закупили
-	 PurchaseDate  date not null,         -- дата закупки
-	 Amount        int  not null,         -- количество закупленных книг
-	 PurchasePrice int  not null,         -- цена закупки
+     Id            int  not null identity(1, 1) constraint Purchases_PK primary key (Id), -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 IdProvider    int  not null,         -- РїРѕСЃС‚Р°РІС‰РёРє, Сѓ РєРѕС‚РѕСЂРѕРіРѕ Р·Р°РєСѓРїРёР»Рё РєРЅРёРіРё
+	 IdPubBook     int  not null,         -- РєР°РєРёРµ РєРЅРёРіРё Р·Р°РєСѓРїРёР»Рё
+	 PurchaseDate  date not null,         -- С†РµРЅР° Р·Р°РєСѓРїРєРё
+	 Amount        int  not null,         -- РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РєСѓРїР»РµРЅРЅС‹С… РєРЅРёРі
+	 PurchasePrice int  not null,         -- РґР°С‚Р° Р·Р°РєСѓРїРєРё
 	 
-	 -- дата закупки не может быть больше текущей
+	 -- РґР°С‚Р° Р·Р°РєСѓРїРєРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ С‚РµРєСѓС‰РµР№
 	 constraint Purchases_PurchaseDate_check check (PurchaseDate < getdate()),	 
-	 -- цена закупки не может быть отрицательной
+	 -- С†РµРЅР° Р·Р°РєСѓРїРєРё РєРЅРёРі РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕР№
 	 constraint Purchases_PurchasePrice_check check (PurchasePrice > 0),
-	 -- количество закуленных книг не может быть отрицательным
+	 -- РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РєСѓРїР»РµРЅРЅС‹С… РєРЅРёРі РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј
 	 constraint Purchases_Amount_check check (Amount > 0),
-	 -- связь с таблицей Магазины
+	 -- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ РџРѕСЃС‚Р°РІС‰РёРєРё
 	 constraint FK_Purchases_Providers foreign key(IdProvider) references dbo.Providers(Id),
-	 -- связь с таблицей Книги
+	 -- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ РљРЅРёРіРё СЃ РёР·РґР°С‚РµР»СЊСЃРІР°РјРё
 	 constraint FK_Purchases_PubBooks foreign key(IdPubBook) references dbo.PubBooks(Id)
 );
 go
 
--- создание таблицы Продажи
-create table Sales (
-     Id           int          not null identity(1, 1) constraint Sales_PK primary key (Id),
-	 IdPubBook    int  not null,        -- проданная книга
-	 SaleDate     date not null,        -- дата продажи
-	 Amount       int  not null,        -- количество проданных книг
-	 SalePrice    int  not null,        -- стоимость продажи 
-	 DeliverPrice int  not null,        -- цена доставки
+-- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РџСЂРѕРґР°Р¶Рё
+create table Sales ( 
+     Id           int          not null identity(1, 1) constraint Sales_PK primary key (Id), -- РґР»СЏ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚Р°
+	 IdPubBook    int  not null,        -- РїСЂРѕРґР°РЅР°СЏ РєРЅРёРіР°
+	 SaleDate     date not null,        -- РґР°С‚Р° РїСЂРѕРґР°Р¶Рё
+	 Amount       int  not null,        -- РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕРґР°РЅРЅС‹С… РєРЅРёРі
+	 SalePrice    int  not null,        -- С†РµРЅР° РїСЂРѕРґР°Р¶Рё РєРЅРёРі
+	 DeliverPrice int  not null,        -- С†РµРЅР° Р·Р° РґРѕСЃС‚Р°РІРєСѓ
 	 
-	 -- дата закупки не может быть больше текущей
+	 -- РґР°С‚Р° РїСЂРѕРґР°Р¶Рё РєРЅРёРі РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ С‚РµРєСѓС‰РµР№
 	 constraint Sales_SaleDate_check check (SaleDate < getdate()),	 
-	 -- количество закуленных книг не может быть отрицательным
+	 -- РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕРґР°РЅРЅС‹С… РєРЅРёРі РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРµС†Р°С‚РµР»СЊРЅС‹Рј
 	 constraint Sales_Amount_check check (Amount > 0),
-	 -- цена доставки не может быть отрицательной
+	 -- С†РµРЅР° Р·Р° РґРѕСЃС‚Р°РІРєСѓ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕР№
 	 constraint Sales_DeliverPrice_check check (DeliverPrice > 0),
-	 -- стоимость продажи книг не может быть отрицательной
+	 -- С†РµРЅР° РїСЂРѕРґР°Р¶Рё РєРЅРёРі РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕР№
 	 constraint Sales_SalePrice_check check (SalePrice > 0),
-	-- связь с таблицей Книги
+	-- СЃРІСЏР·СЊ СЃ С‚Р°Р±Р»РёС†РµР№ РљРЅРёРіРё СЃ РёР·РґР°С‚РµР»СЊСЃС‚РІР°РјРё
 	 constraint FK_Sales_PubBooks foreign key(IdPubBook) references dbo.PubBooks(Id)
 );
 go
 
 
--- Если не создана хотя бы одна таблица, откатить
--- транзакцию
+-- Р•СЃР»Рё РЅРµ СЃРѕР·РґР°РЅР° С…РѕС‚СЏ Р±С‹ РѕРґРЅР° С‚Р°Р±Р»РёС†Р°, РѕС‚РєР°С‚РёС‚СЊ
+-- С‚СЂР°РЅР·Р°РєС†РёСЋ
 if object_id('Genres') is null  or 
    object_id('AgeRestrictions') is null  or 
    object_id('Providers') is null  or 
@@ -331,7 +331,7 @@ if object_id('Genres') is null  or
    object_id('Sales') is null  begin  
    rollback transaction;
    print '';
-   print 'Не все таблицы созданы';
+   print 'РќРµ РІСЃРµ С‚Р°Р±Р»РёС†С‹ СЃРѕР·РґР°РЅС‹';
    print '';
    set noexec on;
 end else
@@ -339,5 +339,5 @@ end else
 
 	
 print '';
-print 'Создание базы данных и таблиц выполнено';
+print 'РЎРѕР·РґР°РЅРёРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С… Рё С‚Р°Р±Р»РёС† РІС‹РїРѕР»РЅРµРЅРѕ';
 print '';
