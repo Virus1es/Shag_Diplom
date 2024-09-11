@@ -3,13 +3,69 @@ import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { FloatLabel } from "primereact/floatlabel";
 import { Divider } from 'primereact/divider';
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {Checkbox} from "primereact/checkbox";
+
+// посыл запроса входа в аккаунт на сервер
+export function LoginUser(username, password, remember, toast, navigate){
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    // настройка и отправка AJAX-запроса на сервер
+    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
+    // "http://localhost:5257/books/search"
+    request.open("POST", "http://localhost:5257/users/login");
+
+    // передача на сервер в параметрах формы
+    let body = new FormData();
+    // body.append("username", 'username');
+    body.append("username", username);
+    body.append("password", password);
+    body.append("remember", remember);
+
+    // callBack, работающий по окончании запроса
+    request.onload = function () {
+        // если запрос завершен и завершен корректно вывести полученные от сервера данные
+        if (request.status >= 200 && request.status <= 399) {
+
+            let text = request.responseText;
+
+            if (text.includes('Errors:'))
+                toast.current.show({
+                            severity: 'error',
+                            summary: 'Ошибка',
+                            detail: 'Не верно указан логин или пароль'
+                });
+            else if (text === 'Пользователь заблокирован')
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Ошибка',
+                    detail: 'Данный пользователь заблокирован'
+                });
+            else
+                navigate('/');
+            console.log(text);
+        } // if
+    } // callBack
+
+    // собственно отправка запроса
+    request.send(body);
+}
 
 
 export default function ShowLogin(){
+    // для уведомлений Toast
+    const toast = useRef(null);
+
+    // имя пользователя(логин)
     const [login, setLogin] = useState('');
+
+    // пароль пользователя
     const [password, setPassword] = useState('');
+
+    // запоминать ли данные для входа
+    const [remember, setRemember] = useState(false);
 
     // используется для redirect
     const navigate = useNavigate();
@@ -38,9 +94,20 @@ export default function ShowLogin(){
                 <label htmlFor="password" style={{fontSize: '12pt', marginTop: '-9px'}}>Пароль</label>
             </FloatLabel>
 
+            <div className="my-3 mx-auto">
+                <Checkbox inputId="remember"
+                          onChange={(e) => {setRemember(e.checked)}}
+                          checked={remember} />
+                <label htmlFor="remember" className="ml-2">Запомнить данные</label>
+            </div>
+
             <Button label="Войти"
                     icon="pi pi-sign-in"
                     className="my-2 mx-auto"
+                    onClick={() => {
+                        if(login !== '' && password !== '')
+                            LoginUser(login, password, remember, toast, navigate)
+                    }}
             />
 
             <Divider type="solid" />
