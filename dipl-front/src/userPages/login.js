@@ -6,9 +6,10 @@ import { Divider } from 'primereact/divider';
 import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Checkbox} from "primereact/checkbox";
+import {useCookies} from "react-cookie";
 
 // посыл запроса входа в аккаунт на сервер
-export function LoginUser(username, password, remember, toast, navigate){
+export function LoginUser(username, password, remember, toast, navigate, setFunc){
     // XNLHttpRequest это и есть реализация AJAX в JavaScript
     let request = new XMLHttpRequest();
 
@@ -43,8 +44,11 @@ export function LoginUser(username, password, remember, toast, navigate){
                     summary: 'Ошибка',
                     detail: 'Данный пользователь заблокирован'
                 });
-            else
+            else {
+                setFunc('currentUser', username);
+                setFunc('currentUserRole', text);
                 navigate('/');
+            }
             console.log(text);
         } // if
     } // callBack
@@ -69,6 +73,9 @@ export default function ShowLogin(){
 
     // используется для redirect
     const navigate = useNavigate();
+
+    // cookie - если человек вошёл, запоминаем что он вашёл
+    const [cookies, setCookie] = useCookies(['currentUser', 'currentUserRole']);
 
 
     return(
@@ -106,7 +113,7 @@ export default function ShowLogin(){
                     className="my-2 mx-auto"
                     onClick={() => {
                         if(login !== '' && password !== '')
-                            LoginUser(login, password, remember, toast, navigate)
+                            LoginUser(login, password, remember, toast, navigate, setCookie)
                     }}
             />
 

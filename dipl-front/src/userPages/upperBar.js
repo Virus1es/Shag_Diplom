@@ -11,6 +11,9 @@ import {Dropdown} from "primereact/dropdown";
 import {Avatar} from "primereact/avatar";
 import {ScrollTop} from "primereact/scrolltop";
 import {Divider} from "primereact/divider";
+import { ConfirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog } from 'primereact/confirmdialog';
+import {useCookies} from "react-cookie";
 
 // вывод строки для поиска книг
 function ShowSearchField(){
@@ -178,6 +181,33 @@ function ShowMenu() {
     )
 }
 
+export function LogoutUser(removeCookie){
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    // настройка и отправка AJAX-запроса на сервер
+    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
+    // "http://localhost:5257/books/search"
+    request.open("POST", "http://localhost:5257/users/logout");
+
+    // передача на сервер в параметрах формы
+    // let body = new FormData();
+    // body.append("username", 'username');
+
+    // callBack, работающий по окончании запроса
+    request.onload = function () {
+        // если запрос завершен и завершен корректно вывести полученные от сервера данные
+        if (request.status >= 200 && request.status <= 399) {
+            removeCookie('currentUser');
+            removeCookie('currentUserRole');
+            console.log(request.responseText);
+        } // if
+    } // callBack
+
+    // собственно отправка запроса
+    request.send();
+}
+
 // собственно сборка верхней панели
 export default function ShowUpperBar(){
     // выбираемый жанр из списка
@@ -189,6 +219,8 @@ export default function ShowUpperBar(){
     // используется для redirect
     const navigate = useNavigate();
 
+    const [cookies, removeCookie] = useCookies(['currentUser', 'currentUserRole']);
+
     const { searchBooks } = useContext(BooksContext);
 
     // при изменении выбора жанра инициализируем поиск по этому жанру
@@ -198,6 +230,29 @@ export default function ShowUpperBar(){
             navigate('/booksearch');
         }
     }, [selectedGener]);
+
+    console.log(cookies.currentUser);
+
+    const accept = () => LogoutUser(removeCookie);
+
+    const reject = () => {}
+
+    const userAcc = () => {
+        if(isUndefined(cookies.currentUser))
+            navigate('/login')
+        else
+            confirmDialog({
+                message: 'Вы уже вошли в аккаунт. Хотите выйти?',
+                header: 'Подтверждение',
+                icon: 'pi pi-exclamation-triangle',
+                defaultFocus: 'accept',
+                rejectLabel: 'Нет',
+                acceptIcon: 'pi pi-sign-out',
+                acceptLabel: 'Да',
+                accept,
+                reject
+            });
+    };
 
     return (
         <div className="App">
@@ -218,7 +273,8 @@ export default function ShowUpperBar(){
                             size="large"
                             className="user-profile"
                             shape="circle"
-                            onClick={() => navigate('/login')}/>
+                            onClick={userAcc}/>
+                    <ConfirmDialog />
                     <ShowMenu/>
                 </div>
             </div>

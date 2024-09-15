@@ -53,7 +53,7 @@ export function RegisterUser(username, email, password, toast, navigate){
                     });
             }
             else
-                navigate('/');
+                navigate('/login');
             console.log(text);
         } // if
     } // callBack

@@ -7,6 +7,7 @@ import {Rating} from "primereact/rating";
 import { Chip } from 'primereact/chip';
 import {BooksContext} from "../Context";
 import {useNavigate} from "react-router-dom";
+import {useCookies} from "react-cookie";
 
 
 const flickityOptions = {
@@ -191,7 +192,36 @@ function ShowYearBooks() {
     )
 }
 
+
+export function CatchUser(){
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    // настройка и отправка AJAX-запроса на сервер
+    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
+    // "http://localhost:5257/books/search"
+    request.open("GET", 'http://localhost:5257/users/getuser');
+
+    // передача на сервер в параметрах формы
+    // let body = new FormData();
+    // body.append("username", 'username');
+
+    // callBack, работающий по окончании запроса
+    request.onload = function () {
+        // если запрос завершен и завершен корректно вывести полученные от сервера данные
+        if (request.status >= 200 && request.status <= 399) {
+            let text = JSON.parse(request.responseText);
+            console.log(text);
+        } // if
+    } // callBack
+
+    // собственно отправка запроса
+    request.send();
+}
+
 export default function Home(){
+    CatchUser();
+
     return (
         <div className="book-store">
             <MyCarousel/>
