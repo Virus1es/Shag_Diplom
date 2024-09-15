@@ -17,6 +17,8 @@ namespace Dipl_Back.Controllers;
 public class UsersController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+
 
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IUserStore<IdentityUser> _userStore;
@@ -24,13 +26,20 @@ public class UsersController : Controller
     private readonly ILogger<UsersController> _logger;
     private readonly IEmailSender _emailSender;
 
+
+    // создаем две роли
+    private readonly IdentityRole role1 = new IdentityRole { Name = "admin" };
+    private readonly IdentityRole role2 = new IdentityRole { Name = "user" };
+
     public UsersController(UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<UsersController> logger,
             IEmailSender emailSender)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _userStore = userStore;
         _emailStore = GetEmailStore();
         _signInManager = signInManager;
@@ -72,7 +81,7 @@ public class UsersController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<User>> GetUser([FromForm] string username)
+    public async Task<ActionResult<User>> GetUser([FromForm] string username = "commonUser")
     {
         IdentityUser user = await _userManager.FindByNameAsync(username);
 
@@ -111,6 +120,8 @@ public class UsersController : Controller
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 
                 await _signInManager.SignInAsync(user, isPersistent: false);
+
+                await _userManager.AddToRoleAsync(user, "user");
                 return $"Аккаунт успешно создан {username}; {email}; {password}";
             }
             foreach (var error in result.Errors)
@@ -142,7 +153,6 @@ public class UsersController : Controller
     public async Task<string> CheckIn()
     {
         var user = await _signInManager.GetExternalLoginInfoAsync();
-        _logger.LogInformation("User logged out.");
         return $"Хранится пользователь: {user}";
     }
 
@@ -169,8 +179,12 @@ public class UsersController : Controller
             var result = await _signInManager.PasswordSignInAsync(username, password, remember, lockoutOnFailure: false);
             if (result.Succeeded)
             {
+                var user = await _userManager.FindByNameAsync(username);
+
                 _logger.LogInformation("User logged in.");
-                return "Вход успешно выполнен";
+
+                var res = await _userManager.GetRolesAsync(user);
+                return res.First();
             }
             if (result.IsLockedOut)
             {

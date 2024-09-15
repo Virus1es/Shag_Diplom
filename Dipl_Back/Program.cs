@@ -1,6 +1,7 @@
 using Dipl_Back.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,14 +36,15 @@ builder.Services.AddIdentityCore<IdentityUser>(
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<BooksContext>();
+
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
                 .AddEntityFrameworkStores<BooksContext>();
 
 //builder.Services.AddAuthorization();
 
-builder.Services.AddDbContext<BooksContext>(options => options.UseSqlServer("DefaultConnection"));
 //builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 //                .AddEntityFrameworkStores<BooksContext>();
 

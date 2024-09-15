@@ -15,7 +15,7 @@ public class AgeRestrictionsController(BooksContext context) : Controller
     private BooksContext _db = context;
 
     [HttpGet]
-    public JsonResult GetAgeRestrictions() => new(_db.AgeRestrictions.ToList());
+    public JsonResult Get() => new(_db.AgeRestrictions.ToList());
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
