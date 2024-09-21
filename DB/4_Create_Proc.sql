@@ -3,7 +3,7 @@ go
 
 -- Запросы для предоставления отчётов для сотрудников и подборок для пользователей
 
--- запрос 1
+-- запрос 0
 -- просмотр суммы и количества продаж по датам за определённый период
 create or alter proc SelectSalesByDateArea
 	@StartDate date,
@@ -22,6 +22,78 @@ as
 go
 
 exec SelectSalesByDateArea '2024-01-01', '2024-05-01';
+go
+
+-- запрос 1
+-- просмотр суммы и количества продаж по месяцам за текущий год
+create or alter proc SelectSalesByCurYear
+as
+	declare @StartDate date = getdate(), @EndDate date = DATEADD(yy, DATEDIFF(yy, 0, GETDATE()), 0);
+
+	select
+		case MONTH(SaleDate)
+			when 1  then 'Январь'
+			when 2  then 'Февраль'
+			when 3  then 'Март'
+			when 4  then 'Апрель'
+			when 5  then 'Май'
+			when 6  then 'Июнь'
+			when 7  then 'Июль'
+			when 8  then 'Август'
+			when 9  then 'Сентябрь'
+			when 10 then 'Октябрь'
+			when 11 then 'Ноябрь'
+			when 12 then 'Декабрь'
+		end
+		as [Month]
+		, Sum(SalePrice + DeliverPrice) as Price
+		, Sum(Amount) as Amount
+	from
+		Sales
+	where
+		SaleDate between @EndDate and  @StartDate
+	group by
+		MONTH(SaleDate);
+go
+
+exec SelectSalesByCurYear;
+go
+
+
+-- запрос 2.1
+-- просмотр суммы и количества закупок по месяцам за текущий год
+create or alter proc SelectPurchaseByCurYear
+as
+	declare @StartDate date = getdate(), @EndDate date = DATEADD(yy, DATEDIFF(yy, 0, GETDATE()), 0);
+
+	select
+		case MONTH(PurchaseDate)
+			when 1  then 'Январь'
+			when 2  then 'Февраль'
+			when 3  then 'Март'
+			when 4  then 'Апрель'
+			when 5  then 'Май'
+			when 6  then 'Июнь'
+			when 7  then 'Июль'
+			when 8  then 'Август'
+			when 9  then 'Сентябрь'
+			when 10 then 'Октябрь'
+			when 11 then 'Ноябрь'
+			when 12 then 'Декабрь'
+		end
+		as [Month]
+		, Sum(PurchasePrice) as Price
+		, Sum(Amount) as Amount
+	from
+		Purchases
+	where
+		PurchaseDate between @EndDate and  @StartDate
+	group by
+		MONTH(PurchaseDate);
+go
+
+
+exec SelectPurchaseByCurYear;
 go
 
 -- запрос 2
