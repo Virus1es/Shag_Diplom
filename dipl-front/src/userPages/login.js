@@ -7,6 +7,7 @@ import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Checkbox} from "primereact/checkbox";
 import {useCookies} from "react-cookie";
+import {Toast} from "primereact/toast";
 
 // посыл запроса входа в аккаунт на сервер
 export function LoginUser(username, password, remember, toast, navigate, setFunc){
@@ -74,7 +75,7 @@ export default function ShowLogin(){
     // используется для redirect
     const navigate = useNavigate();
 
-    // cookie - если человек вошёл, запоминаем что он вашёл
+    // cookie - если человек вошёл, запоминаем что он вошёл
     const [cookies, setCookie] = useCookies(['currentUser', 'currentUserRole']);
 
 
@@ -128,6 +129,8 @@ export default function ShowLogin(){
                     onClick={() => navigate('/registration')}
                     className="my-2 mx-auto"
             />
+
+            <Toast ref={toast} />
         </div>
     )
 }

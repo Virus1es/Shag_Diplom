@@ -74,6 +74,8 @@ function ShowMenu() {
     // видимость бокового меню
     const [visible, setVisibleSlidebar] = useState(false);
 
+    const [cookies] = useCookies(['currentUser', 'currentUserRole']);
+
     // вывод уведомлений
     const toast = useRef(null);
 
@@ -151,6 +153,30 @@ function ShowMenu() {
             ]
         }
     ];
+
+    if(cookies.currentUserRole === 'admin'){
+        items.push({
+            label: 'Для администратора',
+            icon: 'pi pi-star',
+            items: [
+                {
+                    label: 'Добавление',
+                    icon: 'pi pi-plus-circle',
+                    items: [
+                        {
+                            label: 'Добавление книги',
+                            url: '/addbooks'
+                        }
+                    ]
+                },
+                {
+                    label: 'Отчёты и статистика',
+                    icon: 'pi pi-chart-bar',
+                    url: '/reports'
+                }
+                ]
+        })
+    }
 
     return (
         <>

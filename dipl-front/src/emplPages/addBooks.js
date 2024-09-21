@@ -6,10 +6,74 @@ import {Toast} from "primereact/toast";
 import { FileUpload } from 'primereact/fileupload';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputTextarea } from 'primereact/inputtextarea';
-import {useRef, useState} from "react";
+import { MultiSelect } from 'primereact/multiselect';
+import { useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {checkPatronymic, GetArrayByUrl} from "../utils";
+import {isNullOrUndef} from "chart.js/helpers";
+import {useCookies} from "react-cookie";
 
+export function AddBook(title, imageFileName, author, genre, age, price, yearCreation, description, pubs){
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    // настройка и отправка AJAX-запроса на сервер
+    request.open("PUT", 'http://localhost:5257/books/put');
+
+    // передача на сервер в параметрах формы
+    let body = new FormData();
+    body.append("Title", title);
+    body.append("Image", imageFileName);
+    body.append("IdAuthor", author);
+    body.append("IdGenre", genre);
+    body.append("IdAge", age);
+    body.append("Price", price);
+    body.append("CreationYear", yearCreation);
+    body.append("BookDescription", description);
+
+    // callBack, работающий по окончании запроса
+    request.onload = function () {
+        // если запрос завершен и завершен корректно вывести полученные от сервера данные
+        if (request.status >= 200 && request.status <= 399) {
+            let text = request.responseText;
+            console.log(text);
+            if(!isNaN(text))
+                SetPubsToBook(Number(text), pubs);
+        } // if
+    } // callBack
+
+    // собственно отправка запроса
+    request.send();
+}
+
+export function SetPubsToBook(id, pubs){
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    pubs.forEach((pub) => {
+        // настройка и отправка AJAX-запроса на сервер
+        // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
+        // "http://localhost:5257/books/search"
+        request.open("PUT", 'http://localhost:5257/pubbooks/put');
+
+        // передача на сервер в параметрах формы
+        let body = new FormData();
+        body.append("IdBook", id);
+        body.append("IdHouse", pub.id);
+
+        // callBack, работающий по окончании запроса
+        request.onload = function () {
+            // если запрос завершен и завершен корректно вывести полученные от сервера данные
+            if (request.status >= 200 && request.status <= 399) {
+                let text = request.responseText;
+                console.log(text);
+            } // if
+        } // callBack
+
+        // собственно отправка запроса
+        request.send();
+    })
+}
 
 export default function ShowBookForm(){
     // для уведомлений Toast
@@ -37,10 +101,19 @@ export default function ShowBookForm(){
     const [yearCreation, setYearCreation] = useState();
 
     // описание книги
-    const [description, setDescription] = useState();
+    const [description, setDescription] = useState('');
+
+    // выбранные публикации книги
+    const [selectedPubs, setSelectedPubs] = useState([]);
 
     // используется для redirect
     const navigate = useNavigate();
+
+    const [cookies] = useCookies(['currentUser', 'currentUserRole']);
+
+    if (cookies.currentUserRole !== 'admin') navigate('/');
+
+    let pubs = GetArrayByUrl('http://localhost:5257/PublishingHouses/get');
 
     let authors = GetArrayByUrl('http://localhost:5257/authors/get').map(
         (author) => {
@@ -55,7 +128,9 @@ export default function ShowBookForm(){
     let ages = GetArrayByUrl('http://localhost:5257/agerestrictions/get');
 
     const savePicture = (e) => {
+        let file = e.files[0];
 
+        setImageFileName(file.name);
     }
 
     return(
@@ -67,20 +142,21 @@ export default function ShowBookForm(){
                 <InputText value={title}
                            id="title"
                            onChange={(e) => setTitle(e.target.value)}
-
                 />
                 <label htmlFor="title" style={{fontSize: '12pt', marginTop: '-9px'}}>Название книги</label>
             </FloatLabel>
 
 
             <FileUpload className="my-3 mx-auto"
-                        mode="basic"
-                        name="demo[]"
+                        name="image"
+                        url={"http://localhost:5257/books/UploadImage"}
                         accept="image/*"
                         maxFileSize={1000000}
-                        onSelect={savePicture}
                         onUpload={savePicture}
-                        chooseLabel="Добавить обложку"/>
+                        chooseLabel="Добавить обложку"
+                        uploadLabel="Загрузить"
+                        cancelLabel="Сбросить"
+            />
 
             <FloatLabel className="w-full w-14rem my-3 mx-auto">
                 <Dropdown Id="author"
@@ -144,10 +220,35 @@ export default function ShowBookForm(){
                 <label htmlFor="description" style={{fontSize: '12pt', marginTop: '-9px'}}>Описание книги</label>
             </FloatLabel>
 
+
+            <FloatLabel className="my-3 mx-auto w-full md:w-20rem">
+                <MultiSelect id="ms-pubs"
+                             value={selectedPubs}
+                             onChange={(e) => {setSelectedPubs(e.value)}}
+                             options={pubs}
+                             optionLabel="name"
+                             maxSelectedLabels={3}
+                             display="chip"
+                             className="w-full" />
+                <label htmlFor="ms-pubs" style={{fontSize: '12pt', marginTop: '-9px'}}>Издательства книги</label>
+            </FloatLabel>
+
             <Button label="Добавить"
                     icon="pi pi-check"
                     className="my-3 mx-auto"
                     onClick={() => {
+                        if(title !== '' && imageFileName !== '' && !isNullOrUndef(selectedAuthor) &&
+                           !isNullOrUndef(selectedGenre) && !isNullOrUndef(selectedAge) && price !== 0 &&
+                            yearCreation !== 0 && description !== '' && selectedPubs.length > 0)
+                            AddBook(title, imageFileName, selectedAuthor.id, selectedGenre.id, selectedAge.id, price, yearCreation, description, selectedPubs)
+                        else
+                            toast.current.show({
+                                severity: 'error',
+                                summary: 'Ошибка',
+                                detail: 'Пожалуйста, заполните все поля',
+                                life: 3000
+                            }
+                            );
                     }}
             />
             <Toast ref={toast}/>

@@ -7,7 +7,6 @@ import {Rating} from "primereact/rating";
 import { Chip } from 'primereact/chip';
 import {BooksContext} from "../Context";
 import {useNavigate} from "react-router-dom";
-import {useCookies} from "react-cookie";
 
 
 const flickityOptions = {
@@ -25,9 +24,6 @@ function ShowUpperBooks() {
 
     // получение книг с сервера
     let booksUp = GetArrayByUrl('http://localhost:5257/books/get');
-
-    //console.log(GetArrayByUrl('http://localhost:5257/users/get'));
-
 
     useEffect(() => {
         if(books.length !== 0) navigate('/book');
@@ -242,9 +238,9 @@ export default function Home(){
                     <div className="main-menu">
                         <div className="genre">Подборки книг</div>
                         <div className="book-types">
-                            <a href="#" className="book-type active">Набирающие популярность</a>
+                            <a href="#" className="book-type active">Все книги</a>
                             <a href="#" className="book-type">Бестселлеры жанра</a>
-                            <a href="#" className="book-type">Выбор редакции</a>
+                            <a href="#" className="book-type">Набирающие популярность</a>
                             <a href="#" className="book-type">Классика</a>
                         </div>
                     </div>
