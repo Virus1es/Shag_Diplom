@@ -1,11 +1,7 @@
 ﻿using Dipl_Back.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Text.Encodings.Web;
 using System.Text;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -81,7 +77,7 @@ public class UsersController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<User>> GetUser([FromForm] string username = "commonUser")
+    public async Task<ActionResult<IdentityUser>> GetUser([FromForm] string username = "commonUser")
     {
         IdentityUser user = await _userManager.FindByNameAsync(username);
 
@@ -90,7 +86,7 @@ public class UsersController : Controller
             return NotFound();
         }
 
-        return new User
+        return new IdentityUser
         {
             UserName = user.UserName,
             Email = user.Email
@@ -193,7 +189,7 @@ public class UsersController : Controller
             }
             else
             {
-                sb.AppendLine("Пользователь с таким именем не найден");
+                sb.AppendLine("Не верно указан логин или пароль");
             }
         }
 

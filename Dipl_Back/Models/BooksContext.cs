@@ -11,15 +11,12 @@ namespace Dipl_Back.Models;
 public partial class BooksContext : IdentityDbContext<IdentityUser>
 {
     // конструктор контекста
-    public BooksContext()
-    {
-    }
+    public BooksContext() {}
 
     // конструктор с параметром, испоьзуется в Program.cs
     public BooksContext(DbContextOptions<BooksContext> options)
         : base(options)
-    {
-    }
+    {}
 
     #region Таблицы базы данных
 

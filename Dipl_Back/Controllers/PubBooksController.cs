@@ -49,7 +49,7 @@ public class PubBooksController(BooksContext context) : Controller
 
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
-    public string Put([FromForm] int id, [FromForm] int IdBook, [FromForm] int IdHouse)
+    public string Put([FromForm] int IdBook, [FromForm] int IdHouse)
     {
         try
         {
@@ -60,7 +60,7 @@ public class PubBooksController(BooksContext context) : Controller
             PubBook pubBook = new()
             {
                 // имитируем изменение данных
-                Id = id,
+                Id = maxid + 1,
                 IdBook = IdBook,
                 IdHouse = IdHouse
             };

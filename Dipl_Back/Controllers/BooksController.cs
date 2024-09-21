@@ -3,6 +3,8 @@ using Dipl_Back.Models.Dto.Procedures;
 using Dipl_Back.Models.Tables.Main;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.Net;
 
 namespace Dipl_Back.Controllers;
 
@@ -41,6 +43,24 @@ public class BooksController(BooksContext context) : Controller
                .SqlQueryRaw<SelectAmountBooksSales>("EXEC SelectAmountBooksSales '2023-01-01', '2024-10-01'")
                .ToList());
 
+    [HttpPost]
+    public async Task<IActionResult> UploadImage(IFormFile image)
+    {
+        if (image == null || image.Length == 0)
+        {
+            return BadRequest("No file uploaded.");
+        }
+
+        var filePath = Path.Combine("D:/My folder/VS folder/Special/Дипломирование/dipl-front/src/img/books", image.FileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await image.CopyToAsync(stream);
+        }
+
+        return Ok(new { filePath });
+    }
+
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
@@ -78,7 +98,7 @@ public class BooksController(BooksContext context) : Controller
 
     // изменение рейтинга книги
     [HttpPost]
-    public string Post([FromForm] int id, [FromForm] int grade)
+    public string ChangeGrade([FromForm] int id, [FromForm] int grade)
     {
         try
         {
@@ -111,7 +131,7 @@ public class BooksController(BooksContext context) : Controller
 
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
-    public string Put([FromForm] int id, [FromForm] string Title, [FromForm] string Image, 
+    public async Task<string> Put([FromForm] string Title, [FromForm] string Image, 
                       [FromForm] int IdAuthor, [FromForm] int IdGenre, [FromForm] int IdAge, 
                       [FromForm] int Price, [FromForm] int CreationYear, [FromForm] string BookDescription)
     {
@@ -124,7 +144,7 @@ public class BooksController(BooksContext context) : Controller
             Book book = new()
             {
                 // имитируем изменение данных
-                Id = id,
+                Id = maxid + 1,
                 Title = Title,
                 BookImage = Image,
                 IdAuthor = IdAuthor,
@@ -139,8 +159,8 @@ public class BooksController(BooksContext context) : Controller
 
             // сохраняем изменения
             _db.Books.Add(book);
-            _db.SaveChanges();
-            return "";
+            await _db.SaveChangesAsync();
+            return $"{maxid + 1}";
         }
         catch (Exception ex)
         {
