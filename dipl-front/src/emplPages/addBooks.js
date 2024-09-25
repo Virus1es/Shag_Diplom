@@ -7,71 +7,76 @@ import { FileUpload } from 'primereact/fileupload';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { MultiSelect } from 'primereact/multiselect';
-import { useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {checkPatronymic, GetArrayByUrl} from "../utils";
 import {isNullOrUndef} from "chart.js/helpers";
 import {useCookies} from "react-cookie";
 
 export function AddBook(title, imageFileName, author, genre, age, price, yearCreation, description, pubs){
-    // XNLHttpRequest это и есть реализация AJAX в JavaScript
-    let request = new XMLHttpRequest();
+    const data = {
+        Title: title,
+        Image: imageFileName,
+        IdAuthor: author,
+        IdGenre: genre,
+        IdAge: age,
+        Price: price,
+        CreationYear: yearCreation,
+        BookDescription: description
+    };
 
-    // настройка и отправка AJAX-запроса на сервер
-    request.open("PUT", 'http://localhost:5257/books/put');
-
-    // передача на сервер в параметрах формы
-    let body = new FormData();
-    body.append("Title", title);
-    body.append("Image", imageFileName);
-    body.append("IdAuthor", author);
-    body.append("IdGenre", genre);
-    body.append("IdAge", age);
-    body.append("Price", price);
-    body.append("CreationYear", yearCreation);
-    body.append("BookDescription", description);
-
-    // callBack, работающий по окончании запроса
-    request.onload = function () {
-        // если запрос завершен и завершен корректно вывести полученные от сервера данные
-        if (request.status >= 200 && request.status <= 399) {
-            let text = request.responseText;
-            console.log(text);
-            if(!isNaN(text))
-                SetPubsToBook(Number(text), pubs);
-        } // if
-    } // callBack
-
-    // собственно отправка запроса
-    request.send();
+    fetch('http://localhost:5257/books/put', {
+        method: 'PUT', // Метод запроса
+        headers: {
+            'Content-Type': 'application/json' // Указываем, что отправляем JSON
+        },
+        body: JSON.stringify(data) // Преобразуем объект в JSON-строку
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log(data);
+            SetPubsToBook(data, pubs);
+            //console.log('Success:', data); // Обрабатываем успешный ответ
+        })
+        .catch((error) => {
+            console.error('Error:', error); // Обрабатываем ошибки
+        });
 }
 
 export function SetPubsToBook(id, pubs){
-    // XNLHttpRequest это и есть реализация AJAX в JavaScript
-    let request = new XMLHttpRequest();
-
     pubs.forEach((pub) => {
-        // настройка и отправка AJAX-запроса на сервер
-        // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
-        // "http://localhost:5257/books/search"
-        request.open("PUT", 'http://localhost:5257/pubbooks/put');
+        console.log(`id: ${id} pub: ${pub.id}`);
 
-        // передача на сервер в параметрах формы
-        let body = new FormData();
-        body.append("IdBook", id);
-        body.append("IdHouse", pub.id);
 
-        // callBack, работающий по окончании запроса
-        request.onload = function () {
-            // если запрос завершен и завершен корректно вывести полученные от сервера данные
-            if (request.status >= 200 && request.status <= 399) {
-                let text = request.responseText;
-                console.log(text);
-            } // if
-        } // callBack
+        const data = {
+            IdBook: id,
+            IdHouse: pub.id
+        };
 
-        // собственно отправка запроса
-        request.send();
+        fetch('http://localhost:5257/pubbooks/put', {
+            method: 'PUT', // Метод запроса
+            headers: {
+                'Content-Type': 'application/json' // Указываем, что отправляем JSON
+            },
+            body: JSON.stringify(data) // Преобразуем объект в JSON-строку
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response;
+            })
+            .then(data => {
+                console.log('Success:', data); // Обрабатываем успешный ответ
+            })
+            .catch((error) => {
+                console.error('Error:', error); // Обрабатываем ошибки
+            });
     })
 }
 
@@ -211,14 +216,18 @@ export default function ShowBookForm(){
                 <label htmlFor="year" style={{fontSize: '12pt', marginTop: '-9px'}}>Год написания</label>
             </FloatLabel>
 
-            <FloatLabel  className="my-3 mx-auto">
-                <InputTextarea id="description"
-                               value={description}
-                               onChange={(e) => setDescription(e.target.value)}
-                               rows={5}
-                               cols={30} />
-                <label htmlFor="description" style={{fontSize: '12pt', marginTop: '-9px'}}>Описание книги</label>
-            </FloatLabel>
+            <div className="my-3 mx-auto">
+                <FloatLabel>
+                    <InputTextarea id="description"
+                                   value={description}
+                                   onChange={(e) => setDescription(e.target.value)}
+                                   maxLength={500}
+                                   rows={5}
+                                   cols={30} />
+                    <label htmlFor="description" style={{fontSize: '12pt', marginTop: '-9px'}}>Описание книги</label>
+                </FloatLabel>
+                <p className="text-end">{description.length}/500</p>
+            </div>
 
 
             <FloatLabel className="my-3 mx-auto w-full md:w-20rem">
@@ -238,9 +247,11 @@ export default function ShowBookForm(){
                     className="my-3 mx-auto"
                     onClick={() => {
                         if(title !== '' && imageFileName !== '' && !isNullOrUndef(selectedAuthor) &&
-                           !isNullOrUndef(selectedGenre) && !isNullOrUndef(selectedAge) && price !== 0 &&
-                            yearCreation !== 0 && description !== '' && selectedPubs.length > 0)
+                            !isNullOrUndef(selectedGenre) && !isNullOrUndef(selectedAge) && price !== 0 &&
+                            yearCreation !== 0 && description !== '' && selectedPubs.length > 0) {
                             AddBook(title, imageFileName, selectedAuthor.id, selectedGenre.id, selectedAge.id, price, yearCreation, description, selectedPubs)
+                            navigate('/');
+                        }
                         else
                             toast.current.show({
                                 severity: 'error',
