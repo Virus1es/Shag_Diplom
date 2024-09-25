@@ -3,6 +3,7 @@ using Dipl_Back.Models.Dto.Procedures;
 using Dipl_Back.Models.Tables.Main;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Drawing;
 using System.Net;
 
@@ -128,39 +129,44 @@ public class BooksController(BooksContext context) : Controller
         }
     }
 
+    // Определите класс для параметров
+    public class BookData
+    {
+        public string Title { get; set; }
+        public string Image { get; set; }
+        public int IdAuthor { get; set; }
+        public int IdGenre { get; set; }
+        public int IdAge { get; set; }
+        public int Price { get; set; }
+        public int CreationYear { get; set; }
+        public string BookDescription { get; set; }
+    }
 
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
-    public async Task<string> Put([FromForm] string Title, [FromForm] string Image, 
-                      [FromForm] int IdAuthor, [FromForm] int IdGenre, [FromForm] int IdAge, 
-                      [FromForm] int Price, [FromForm] int CreationYear, [FromForm] string BookDescription)
+    public async Task<string> Put([FromBody] BookData data)
     {
         try
         {
-            // находим максимальный индекс для вставки
-            int maxid = _db.Books.Select(b => b.Id).Max();
-
             // создание новой книги
             Book book = new()
             {
-                // имитируем изменение данных
-                Id = maxid + 1,
-                Title = Title,
-                BookImage = Image,
-                IdAuthor = IdAuthor,
-                IdGenre = IdGenre,
-                IdAge = IdAge,
-                Price = Price,
-                CreationYear = CreationYear,
+                Title = data.Title,
+                BookImage = data.Image,
+                IdAuthor = data.IdAuthor,
+                IdGenre = data.IdGenre,
+                IdAge = data.IdAge,
+                Price = data.Price,
+                CreationYear = data.CreationYear,
                 Rating = 0.0,
                 AmountRatings = 0,
-                BookDescription = BookDescription
+                BookDescription = data.BookDescription
             };
 
             // сохраняем изменения
             _db.Books.Add(book);
             await _db.SaveChangesAsync();
-            return $"{maxid + 1}";
+            return _db.Books.ToList().Last().Id.ToString();
         }
         catch (Exception ex)
         {

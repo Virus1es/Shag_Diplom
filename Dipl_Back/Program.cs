@@ -58,7 +58,7 @@ var app = builder.Build();
 
 // ��������� CORS - ��������� ������������ ����� ��������� ��������
 // � ��� ���� REST-��������
-app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod());
+app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 // Configure the HTTP request pipeline.
 app.UseAuthentication();

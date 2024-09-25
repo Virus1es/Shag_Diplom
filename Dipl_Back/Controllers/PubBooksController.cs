@@ -1,6 +1,7 @@
 ﻿using Dipl_Back.Models.Tables.Main;
 using Dipl_Back.Models;
 using Microsoft.AspNetCore.Mvc;
+using static Dipl_Back.Controllers.BooksController;
 
 namespace Dipl_Back.Controllers;
 
@@ -47,22 +48,24 @@ public class PubBooksController(BooksContext context) : Controller
         }
     }
 
+    // Определите класс для параметров
+    public class PubBookData
+    {
+        public int IdBook { get; set; }
+        public int IdHouse { get; set; }
+    }
+
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
-    public string Put([FromForm] int IdBook, [FromForm] int IdHouse)
+    public string Put([FromBody] PubBookData data)
     {
         try
         {
-            // находим максимальный индекс для вставки
-            int maxid = _db.PubBooks.Select(b => b.Id).Max();
-
             // создание новой книги с издательством
             PubBook pubBook = new()
             {
-                // имитируем изменение данных
-                Id = maxid + 1,
-                IdBook = IdBook,
-                IdHouse = IdHouse
+                IdBook = data.IdBook,
+                IdHouse = data.IdHouse
             };
 
             // сохраняем изменения
