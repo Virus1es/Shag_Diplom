@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {BooksContext} from "../Context";
+import React, {useEffect, useState} from 'react';
 import {Tag} from "primereact/tag";
 import {Rating} from "primereact/rating";
 import { Image } from 'primereact/image';
@@ -8,15 +7,12 @@ import { Dropdown } from 'primereact/dropdown';
 import { Badge } from 'primereact/badge';
 import { Tooltip } from 'primereact/tooltip';
 import {useCookies} from "react-cookie";
-import {useNavigate} from "react-router-dom";
 
 function GetPubsByBook(searchType, value, setFunc) {
     // XNLHttpRequest это и есть реализация AJAX в JavaScript
     let request = new XMLHttpRequest();
 
     // настройка и отправка AJAX-запроса на сервер
-    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
-    // "http://localhost:5257/books/search"
     request.open("POST", "http://localhost:5257/pubbooks/searchpubsbyid");
 
     // передача на сервер в параметрах формы
@@ -37,16 +33,10 @@ function GetPubsByBook(searchType, value, setFunc) {
 }
 
 export default function ShowBook(){
-    // использование контекста для передачи выбранной книги
-    const {books} = useContext(BooksContext);
-
-    // используется для redirect в коде
-    const navigate = useNavigate();
-
     // cookie нужные для выделения текущих публикаций книги
     const [cookies, setCookie] = useCookies(['pubs']);
 
-    let book = books[0];
+    let book = JSON.parse(localStorage.getItem('book'))[0];
 
     // действия пометки обработки запроса
     const [loadingCart, setLoadingCart] = useState(false);

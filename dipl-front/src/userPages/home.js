@@ -1,11 +1,10 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import '../index.css';
 import Flickity from "react-flickity-component";
 import {checkPatronymic, GetArrayByUrl, PostBooksWithHeaders, PrintBookCard} from "../utils";
 import {Tag} from 'primereact/tag';
 import {Rating} from "primereact/rating";
 import { Chip } from 'primereact/chip';
-import {BooksContext} from "../Context";
 import {useNavigate} from "react-router-dom";
 
 
@@ -18,16 +17,13 @@ const flickityOptions = {
 // м.б. будут новинки
 function ShowUpperBooks() {
     // получаем функцию присвоения книг в контекст
-    const {books,  searchBooks } = useContext(BooksContext);
+    let books = JSON.parse(localStorage.getItem('books'));
     // используется для redirect в коде
     const navigate = useNavigate();
 
     // получение книг с сервера
     let booksUp = GetArrayByUrl('http://localhost:5257/books/get');
 
-    useEffect(() => {
-        if(books.length !== 0) navigate('/book');
-    }, [books]);
 
     return (booksUp.slice(0, 5).map((book) => {
             return (
@@ -60,7 +56,7 @@ function ShowUpperBooks() {
                         </div>
                         <div className="book-see"
                              onClick={() =>  {PostBooksWithHeaders("http://localhost:5257/books/search",
-                                                                   "id", book.id, searchBooks)}}>
+                                                                   "id", book.id, navigate, '/book')}}>
                             Подробнее
                         </div>
                     </div>
@@ -113,22 +109,17 @@ function MyCarousel() {
 // вывод популярных книг в определённом жанре или из всех жанров
 function ShowBooksByGenre() {
     // получаем функцию присвоения книг в контекст
-    const {books,  searchBooks } = useContext(BooksContext);
+    let books = JSON.parse(localStorage.getItem('books'));
     // используется для redirect в коде
     const navigate = useNavigate();
 
     // получение книг с сервера
     const booksfor = GetArrayByUrl('http://localhost:5257/books/get');
 
-    useEffect(() => {
-        if(books.length !== 0) navigate('/book');
-    }, [books]);
-
     // заполнение массива разметкой
     return (booksfor.map((book) =>
-        <div onClick={() => PostBooksWithHeaders("http://localhost:5257/books/search",
-                                                 "id", book.id, searchBooks)}>
-            {PrintBookCard(book)}
+        <div>
+            {PrintBookCard(book, navigate)}
         </div>
     ))
 }
@@ -156,22 +147,19 @@ function ShowWeekAuthors() {
 // вывод книг популярных в этом году
 function ShowYearBooks() {
     // получаем функцию присвоения книг в контекст
-    const {books,  searchBooks } = useContext(BooksContext);
+    let books = JSON.parse(localStorage.getItem('books'));
     // используется для redirect в коде
     const navigate = useNavigate();
 
     let booksPop = GetArrayByUrl('http://localhost:5257/books/popular').slice(0, 5);
 
-    useEffect(() => {
-        if(books.length !== 0) navigate('/book');
-    }, [books]);
 
     // заполнение массива разметкой
     return (booksPop.map((book) => {
         return (
             <div className="year-book"
                  onClick={() => {PostBooksWithHeaders("http://localhost:5257/books/search",
-                                                     "id", book.id, searchBooks); console.log("Пытаюсь!")}}
+                                                     "id", book.id, navigate, '/book')}}
             >
                 <img src={require('../img/books/' + book.bookImage)}
                      alt={book.title}
@@ -207,7 +195,6 @@ export function CatchUser(){
         // если запрос завершен и завершен корректно вывести полученные от сервера данные
         if (request.status >= 200 && request.status <= 399) {
             let text = JSON.parse(request.responseText);
-            console.log(text);
         } // if
     } // callBack
 

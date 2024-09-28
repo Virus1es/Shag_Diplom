@@ -21,7 +21,7 @@ export function GetArrayByUrl(url) {
 }
 
 // получить данные по url
-export function PostBooksWithHeaders(url, searchType, value, searchBooksFunc){
+export function PostBooksWithHeaders(url, searchType, value, navigateFunc, navTo){
     // XNLHttpRequest это и есть реализация AJAX в JavaScript
     let request = new XMLHttpRequest();
 
@@ -40,7 +40,9 @@ export function PostBooksWithHeaders(url, searchType, value, searchBooksFunc){
         // если запрос завершен и завершен корректно вывести полученные от сервера данные
         if (request.status >= 200 && request.status <= 399) {
             let books = JSON.parse(request.responseText);
-            searchBooksFunc(books);
+            navTo === '/book' ? localStorage.setItem('book', JSON.stringify(books))
+                : localStorage.setItem('books', JSON.stringify(books));
+            navigateFunc(navTo);
         } // if
     } // callBack
 
@@ -55,9 +57,12 @@ export function checkPatronymic(patronymic) {
     return (patronymic !== "") ? patronymic[0] + "." : '';
 }
 
-export function PrintBookCard(book){
+export function PrintBookCard(book, navFunc){
     return (
-        <div className="book-card">
+        <div className="book-card"
+             onClick={() =>  {
+                 PostBooksWithHeaders("http://localhost:5257/books/search","id", book.id, navFunc, '/book')
+             }}>
             <div className="content-wrapper">
                 <img src={require('./img/books/' + book.bookImage)}
                      alt={book.title}

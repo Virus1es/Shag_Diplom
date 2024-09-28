@@ -7,35 +7,34 @@ import {Route, BrowserRouter, Routes} from "react-router-dom";
 import ShowStores from "./userPages/stores";
 import Home from "./userPages/home";
 import ShowResults from "./userPages/serchRez"
-import Context from "./Context";
 import App from "./App";
 import ShowBook from "./userPages/book";
 import ShowLogin from "./userPages/login";
 import ShowRegister from "./userPages/register";
 import ShowReports from "./emplPages/reports";
 import ShowBookForm from "./emplPages/addBooks";
+import ShowUsers from "./emplPages/users";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-    <Context>
-        <BrowserRouter>
-            <React.StrictMode>
-                <App/>
-            </React.StrictMode>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/stores" element={<ShowStores/>} />
-                <Route path="/booksearch" element={<ShowResults/>} />
-                <Route path="/book" element={<ShowBook/>} />
-                <Route path="/login" element={<ShowLogin/>} />
-                <Route path="/registration" element={<ShowRegister/>} />
-                <Route path="/reports" element={<ShowReports/>} />
-                <Route path="/addbooks" element={<ShowBookForm/>} />
-            </Routes>
-        </BrowserRouter>
-    </Context>
+    <BrowserRouter>
+        <React.StrictMode>
+            <App/>
+        </React.StrictMode>
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/stores" element={<ShowStores/>} />
+            <Route path="/booksearch" element={<ShowResults/>} />
+            <Route path="/book" element={<ShowBook/>} />
+            <Route path="/login" element={<ShowLogin/>} />
+            <Route path="/registration" element={<ShowRegister/>} />
+            <Route path="/reports" element={<ShowReports/>} />
+            <Route path="/addbooks" element={<ShowBookForm/>} />
+            <Route path="/users" element={<ShowUsers/>} />
+        </Routes>
+    </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

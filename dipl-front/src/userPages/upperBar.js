@@ -1,6 +1,5 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {BooksContext} from "../Context";
 import {GetArrayByUrl, PostBooksWithHeaders} from "../utils";
 import {AutoComplete} from "primereact/autocomplete";
 import {isUndefined} from "swr/_internal";
@@ -25,9 +24,6 @@ function ShowSearchField(){
 
     // используется для redirect в коде
     const navigate = useNavigate();
-
-    // получаем функцию присвоения книг в контекст
-    const { searchBooks } = useContext(BooksContext);
 
     // получаем название книг
     let booksName = GetArrayByUrl('http://localhost:5257/books/get').map(item => item.title);
@@ -55,9 +51,7 @@ function ShowSearchField(){
                                   // ищем книги по названию
                                   PostBooksWithHeaders("http://localhost:5257/books/search",
                                                  "title",
-                                                            value,
-                                                            searchBooks);
-                                  navigate('/booksearch');
+                                                            value, navigate, '/booksearch');
                               }
                           }}
             />
@@ -173,6 +167,11 @@ function ShowMenu() {
                     label: 'Отчёты и статистика',
                     icon: 'pi pi-chart-bar',
                     url: '/reports'
+                },
+                {
+                    label: 'Список пользователей',
+                    icon: 'pi pi-users',
+                    url: '/users'
                 }
                 ]
         })
@@ -247,13 +246,11 @@ export default function ShowUpperBar(){
 
     const [cookies, removeCookie] = useCookies(['currentUser', 'currentUserRole']);
 
-    const { searchBooks } = useContext(BooksContext);
-
     // при изменении выбора жанра инициализируем поиск по этому жанру
     useEffect(() => {
         if(selectedGener !== null) {
-            PostBooksWithHeaders("http://localhost:5257/books/search", "genre", selectedGener.genreName, searchBooks);
-            navigate('/booksearch');
+            PostBooksWithHeaders("http://localhost:5257/books/search", "genre", selectedGener.genreName,
+                navigate, '/booksearch');
         }
     }, [selectedGener]);
 
@@ -285,7 +282,7 @@ export default function ShowUpperBar(){
             <div className="header">
                 <div className="browse">
                     <Dropdown value={selectedGener}
-                              onChange={(e) => setSelectedGener(e.value)}
+                              onChange={(e) => {setSelectedGener(e.value); }}
                               options={geners}
                               optionLabel="genreName"
                               placeholder="Выбирите жанр для поиска"
