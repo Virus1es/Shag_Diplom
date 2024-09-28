@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authentication;
+using Azure.Core;
 
 namespace Dipl_Back.Controllers;
 
@@ -114,7 +115,7 @@ public class UsersController : Controller
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 await _userManager.AddToRoleAsync(user, "user");
@@ -195,5 +196,74 @@ public class UsersController : Controller
 
         // If we got this far, something failed, redisplay form
         return sb.ToString();
+    }
+
+    public class UserWithRoles
+    {
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public IList<string> Roles { get; set; }
+    }
+
+    // получить список пользователей
+    public async Task<JsonResult> GetUsers()
+    {
+        var users = _userManager.Users.ToList();
+        var userWithRolesList = new List<UserWithRoles>();
+
+        foreach (var user in users)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            userWithRolesList.Add(new UserWithRoles
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Roles = roles.ToList()
+            });
+        }
+
+        return new(userWithRolesList);
+    }
+
+    // изменить роль пользователю
+    [HttpPost]
+    public async Task<IActionResult> ChangeUserRoleAsync([FromForm] string userId, [FromForm] string newRole)
+    {
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(newRole))
+        {
+            return BadRequest("Не верный запрос.");
+        }
+
+        // Находим пользователя по его ID
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound("Пользователь не найден."); // Пользователь не найден
+        }
+
+        // Получаем текущие роли пользователя
+        var currentRoles = await _userManager.GetRolesAsync(user);
+
+        // Удаляем все текущие роли
+        var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        if (!removeResult.Succeeded)
+        {
+            return NotFound("Не удалось убрать предыдущую роль."); // Ошибка при удалении ролей
+        }
+
+        // Добавляем новую роль
+        var addResult = await _userManager.AddToRoleAsync(user, newRole);
+
+        // Возвращаем результат добавления роли
+        if (addResult.Succeeded)
+        {
+            return Ok("Роль пользователя успешно изменена.");
+        }
+        else
+        {
+            return NotFound("Ошибка при изменении роли.");
+        }
     }
 }
