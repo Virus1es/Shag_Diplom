@@ -80,6 +80,7 @@ function MyCarousel() {
             <Carousel value={books}
                       circular
                       autoplayInterval={3000}
+                      showIndicators={false}
                       itemTemplate={bookTemplate}
                       numVisible={2}
                       numScroll={1} />
