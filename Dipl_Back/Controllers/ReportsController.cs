@@ -1,11 +1,7 @@
-﻿using Castle.Core.Resource;
-using Dipl_Back.Models;
+﻿using Dipl_Back.Models;
 using Dipl_Back.Models.Dto.Procedures;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Text.Json;
 
 namespace Dipl_Back.Controllers;
 

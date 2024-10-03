@@ -4,8 +4,6 @@ using Dipl_Back.Models.Tables.Main;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.Drawing;
-using System.Net;
 
 namespace Dipl_Back.Controllers;
 
@@ -16,6 +14,24 @@ public class BooksController(BooksContext context) : Controller
     // соединение с БД
     // ссылка на базу данных
     private BooksContext _db = context;
+
+    // Определите класс для параметров
+    public class BookData
+    {
+        public string Title { get; set; } = null!;
+        public string Image { get; set; } = null!;
+        public int IdAuthor { get; set; }
+        public int IdGenre { get; set; }
+        public int IdAge { get; set; }
+        public int Price { get; set; }
+        public int CreationYear { get; set; }
+        public string BookDescription { get; set; } = null!;
+    }
+
+    public class BookEditData : BookData
+    {
+        public int Id { get; set; }
+    }
 
     // получить список книг
     [HttpGet]
@@ -65,35 +81,37 @@ public class BooksController(BooksContext context) : Controller
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
-    public string Post([FromForm] int id, [FromForm] string Title, [FromForm] string Image,
-                      [FromForm] int IdAuthor, [FromForm] int IdGenre, [FromForm] int IdAge,
-                      [FromForm] int Price, [FromForm] int CreationYear, [FromForm] string BookDescription)
+    public async Task<IActionResult> Post([FromBody] BookEditData data)
     {
+        if (data == null)
+        {
+            return BadRequest("Invalid data.");
+        }
         try
         {
             Book book = new()
             {
                 // имитируем изменение данных
-                Id = id,
-                Title = Title,
-                BookImage = Image,
-                IdAuthor = IdAuthor,
-                IdGenre = IdGenre,
-                IdAge = IdAge,
-                Price = Price,
-                CreationYear = CreationYear,
-                BookDescription = BookDescription
+                Id = data.Id,
+                Title = data.Title,
+                BookImage = data.Image,
+                IdAuthor = data.IdAuthor,
+                IdGenre = data.IdGenre,
+                IdAge = data.IdAge,
+                Price = data.Price,
+                CreationYear = data.CreationYear,
+                BookDescription = data.BookDescription
             };
 
             // сохраняем изменения
             _db.Books.Update(book);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
-            return "";
+            return Ok("Book updated successfully.");
         }
         catch (Exception ex)
         {
-            return ex.Message;
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 
@@ -129,19 +147,6 @@ public class BooksController(BooksContext context) : Controller
         }
     }
 
-    // Определите класс для параметров
-    public class BookData
-    {
-        public string Title { get; set; }
-        public string Image { get; set; }
-        public int IdAuthor { get; set; }
-        public int IdGenre { get; set; }
-        public int IdAge { get; set; }
-        public int Price { get; set; }
-        public int CreationYear { get; set; }
-        public string BookDescription { get; set; }
-    }
-
     // PUT-запрос (создание данных на сервере)
     [HttpPut]
     public async Task<string> Put([FromBody] BookData data)
@@ -174,27 +179,40 @@ public class BooksController(BooksContext context) : Controller
         }
     }
 
+    public class IdForDelete
+    {
+        public int Id { get; set; }
+    }
 
     // DELETE-запрос (удаление данных на сервере)
     [HttpDelete]
-    public string Delete([FromForm] int id)
+    public async Task<IActionResult> Delete([FromBody] IdForDelete data)
     {
+        if (data.Id < 0)
+        {
+            return BadRequest("Invalid data.");
+        }
         try
         {
             // найти нужную книгу
-            Book book = _db.Books.First(b => b.Id == id);
+            Book book = _db.Books.First(b => b.Id == data.Id);
+
+            // удалить файл обложки книги
+            var filePath = Path.Combine("D:/My folder/VS folder/Special/Дипломирование/dipl-front/src/img/books", book.BookImage);
+
+            System.IO.File.Delete(filePath);
 
             // если нашли удаляем
             if (book != null) _db.Books.Remove(book);
 
             // сохраняем изменения
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
-            return "";
+            return Ok("Book updated successfully.");
         }
         catch (Exception ex)
         {
-            return ex.Message;
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 }
