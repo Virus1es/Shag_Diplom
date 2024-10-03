@@ -14,6 +14,7 @@ import ShowRegister from "./userPages/register";
 import ShowReports from "./emplPages/reports";
 import ShowBookForm from "./emplPages/addBooks";
 import ShowUsers from "./emplPages/users";
+import ShowBooksAdmin from "./emplPages/viewBooks";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -33,6 +34,7 @@ root.render(
             <Route path="/reports" element={<ShowReports/>} />
             <Route path="/addbooks" element={<ShowBookForm/>} />
             <Route path="/users" element={<ShowUsers/>} />
+            <Route path="/adminbooks" element={<ShowBooksAdmin/>} />
         </Routes>
     </BrowserRouter>
 );

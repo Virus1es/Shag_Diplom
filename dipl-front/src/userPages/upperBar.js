@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {GetArrayByUrl, PostBooksWithHeaders} from "../utils";
+import {checkPatronymic, GetArrayByUrl, PostBooksWithHeaders} from "../utils";
 import {AutoComplete} from "primereact/autocomplete";
 import {isUndefined} from "swr/_internal";
 import {Sidebar} from "primereact/sidebar";
@@ -26,7 +26,19 @@ function ShowSearchField(){
     const navigate = useNavigate();
 
     // получаем название книг
-    let booksName = GetArrayByUrl('http://localhost:5257/books/get').map(item => item.title);
+    const [booksName, setBooksName] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setBooksName(await GetArrayByUrl('http://localhost:5257/books/get').map(item => item.title));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // заполняем подсказки для пользователя (регистронезависимый и ищет все схождения в названии)
     const search = (event) => {
@@ -154,12 +166,12 @@ function ShowMenu() {
             icon: 'pi pi-star',
             items: [
                 {
-                    label: 'Добавление',
-                    icon: 'pi pi-plus-circle',
+                    label: 'Администрирование',
+                    icon: 'pi pi-pencil',
                     items: [
                         {
-                            label: 'Добавление книги',
-                            url: '/addbooks'
+                            label: 'Книги',
+                            url: '/adminbooks'
                         }
                     ]
                 },
@@ -239,7 +251,19 @@ export default function ShowUpperBar(){
     const [selectedGener, setSelectedGener] = useState(null);
 
     // все жанры, что есть в базе
-    const geners = GetArrayByUrl('http://localhost:5257/genres/get');
+    const [geners, setGeners] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setGeners(await GetArrayByUrl('http://localhost:5257/genres/get'));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // используется для redirect
     const navigate = useNavigate();
@@ -253,8 +277,6 @@ export default function ShowUpperBar(){
                 navigate, '/booksearch');
         }
     }, [selectedGener]);
-
-    console.log(cookies.currentUser);
 
     const accept = () => LogoutUser(removeCookie);
 

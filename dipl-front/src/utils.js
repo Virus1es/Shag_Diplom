@@ -3,21 +3,18 @@ import {Tag} from "primereact/tag";
 import {Rating} from "primereact/rating";
 
 // получить данные по url
-export function GetArrayByUrl(url) {
-    const [values, setBooks] = useState([]);
-
-    // получение данных с сервера о книгах
-    useEffect(() => {
-        fetch(url)
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                setBooks(data);
-            });
-    }, []);
-
-    return values;
+export async function GetArrayByUrl(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        const data = await response.json(); // Преобразуем ответ в JSON
+        return data; // Возвращаем полученные данные
+    } catch (error) {
+        console.error('Error fetching data from URL:', error);
+        throw error; // Пробрасываем ошибку дальше, чтобы ее можно было обработать в вызывающем коде
+    }
 }
 
 // получить данные по url
@@ -60,7 +57,7 @@ export function checkPatronymic(patronymic) {
 export function PrintBookCard(book, navFunc){
     return (
         <div className="book-card"
-             onClick={() =>  {
+             onClick={(event) =>  {
                  PostBooksWithHeaders("http://localhost:5257/books/search","id", book.id, navFunc, '/book')
              }}>
             <div className="content-wrapper">

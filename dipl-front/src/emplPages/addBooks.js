@@ -7,14 +7,14 @@ import { FileUpload } from 'primereact/fileupload';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { MultiSelect } from 'primereact/multiselect';
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {checkPatronymic, GetArrayByUrl} from "../utils";
 import {isNullOrUndef} from "chart.js/helpers";
 import {useCookies} from "react-cookie";
 
-export function AddBook(title, imageFileName, author, genre, age, price, yearCreation, description, pubs){
-    const data = {
+async function BookRequest(id, title, imageFileName, author, genre, age, price, yearCreation, description, pubs, cPubs, comState){
+    const dataReq = {
         Title: title,
         Image: imageFileName,
         IdAuthor: author,
@@ -25,62 +25,129 @@ export function AddBook(title, imageFileName, author, genre, age, price, yearCre
         BookDescription: description
     };
 
-    fetch('http://localhost:5257/books/put', {
-        method: 'PUT', // Метод запроса
-        headers: {
-            'Content-Type': 'application/json' // Указываем, что отправляем JSON
-        },
-        body: JSON.stringify(data) // Преобразуем объект в JSON-строку
-    })
-        .then(response => {
+    let url = 'http://localhost:5257/books/put';
+    let method = 'PUT';
+
+    if (comState) {
+        dataReq.id = id;
+        url = 'http://localhost:5257/books/post';
+        method = 'POST';
+    }
+
+    try {
+        const response = await fetch(url, {
+            method: method, // Метод запроса
+            headers: {
+                'Content-Type': 'application/json' // Указываем, что отправляем JSON
+            },
+            body: JSON.stringify(dataReq) // Преобразуем объект в JSON-строку
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const data = await response.text();
+        let giveData = !comState ? data : dataReq.id;
+        console.log('here: ' + giveData);
+
+        // Дождитесь завершения SetPubsToBook, если она возвращает промис
+        await SetPubsToBook(giveData, pubs, cPubs, comState);
+    } catch (error) {
+        console.error('Error:', error); // Обрабатываем ошибки
+    }
+}
+
+async function SetPubsToBook(id, pubs, cPubs, state) {
+    // Удаляем публикации, если state истинно
+    if (state) {
+        let pubIds = cPubs.filter((p) => p.idBook === id);
+        const deletePromises = pubIds.map(async (pId) => {
+            const response = await fetch('http://localhost:5257/pubbooks/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json', // Указываем тип контента
+                },
+                body: JSON.stringify(pId) // Отправляем ID в теле запроса
+            });
+
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
-            return response.text();
-        })
-        .then(data => {
-            console.log(data);
-            SetPubsToBook(data, pubs);
-            //console.log('Success:', data); // Обрабатываем успешный ответ
-        })
-        .catch((error) => {
-            console.error('Error:', error); // Обрабатываем ошибки
+            return response.text(); // Если нужно обработать ответ
         });
-}
 
-export function SetPubsToBook(id, pubs){
-    pubs.forEach((pub) => {
-        console.log(`id: ${id} pub: ${pub.id}`);
+        // Ждем завершения всех операций удаления
+        try {
+            await Promise.all(deletePromises);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
 
-
+    // Обновляем публикации
+    const updatePromises = pubs.map(async (pub) => {
         const data = {
             IdBook: id,
             IdHouse: pub.id
         };
 
-        fetch('http://localhost:5257/pubbooks/put', {
+        const response = await fetch('http://localhost:5257/pubbooks/put', {
             method: 'PUT', // Метод запроса
             headers: {
                 'Content-Type': 'application/json' // Указываем, что отправляем JSON
             },
             body: JSON.stringify(data) // Преобразуем объект в JSON-строку
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-                return response;
-            })
-            .then(data => {
-                console.log('Success:', data); // Обрабатываем успешный ответ
-            })
-            .catch((error) => {
-                console.error('Error:', error); // Обрабатываем ошибки
-            });
-    })
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response; // Возвращаем ответ
+    });
+
+    // Ждем завершения всех операций обновления
+    try {
+        const results = await Promise.all(updatePromises);
+        results.forEach(data => {
+            console.log('Success:', data); // Обрабатываем успешный ответ
+        });
+    } catch (error) {
+        console.error('Error:', error); // Обрабатываем ошибки
+    }
+}
+
+async function GetPubsByBook(searchType, value, setFunc) {
+    // XNLHttpRequest это и есть реализация AJAX в JavaScript
+    let request = new XMLHttpRequest();
+
+    // настройка и отправка AJAX-запроса на сервер
+    request.open("POST", "http://localhost:5257/pubbooks/searchpubsbyid");
+
+    // передача на сервер в параметрах формы
+    let body = new FormData();
+    body.append(searchType, value);
+
+    // callBack, работающий по окончании запроса
+    request.onload = function () {
+        // если запрос завершен и завершен корректно вывести полученные от сервера данные
+        if (request.status >= 200 && request.status <= 399) {
+            let books = JSON.parse(request.responseText);
+            setFunc('pubs', books);
+        } // if
+    } // callBack
+
+    // собственно отправка запроса
+    request.send(body);
 }
 
 export default function ShowBookForm(){
+    const [flagEdit, setFlagEdit] = useState(false);
+
+    const [buttonName, setButtonName] = useState('Добавить');
+
+    const [headerName, setHeaderName] = useState('Добавление новой');
+
     // для уведомлений Toast
     const toast = useRef(null);
 
@@ -114,23 +181,39 @@ export default function ShowBookForm(){
     // используется для redirect
     const navigate = useNavigate();
 
-    const [cookies] = useCookies(['currentUser', 'currentUserRole']);
+    const [cookies, setCookie] = useCookies(['currentUserRole', 'BookEdit', 'pubs']);
 
     if (cookies.currentUserRole !== 'admin') navigate('/');
 
-    let pubs = GetArrayByUrl('http://localhost:5257/PublishingHouses/get');
+    const [pubs, setPubs] = useState([]);
 
-    let authors = GetArrayByUrl('http://localhost:5257/authors/get').map(
-        (author) => {
-            return {
-                id: author.id,
-                fullname: author.surname + ' ' + author.firstName[0] + '. ' + checkPatronymic(author.patronymic)
+    const [authors, setAuthors] = useState([]);
+    const [geners, setGeners] = useState([]);
+
+    const [ages, setAges] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const pubsData = await GetArrayByUrl('http://localhost:5257/PublishingHouses/get');
+                const authorsData = await GetArrayByUrl('http://localhost:5257/authors/get');
+                const genersData = await GetArrayByUrl('http://localhost:5257/genres/get');
+                const agesData = await GetArrayByUrl('http://localhost:5257/agerestrictions/get');
+
+                setPubs(pubsData);
+                setAuthors(authorsData.map(author => ({
+                    id: author.id,
+                    fullname: `${author.surname} ${author.firstName[0]}. ${checkPatronymic(author.patronymic)}`
+                })));
+                setGeners(genersData);
+                setAges(agesData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
-        }
-    );
-    let geners = GetArrayByUrl('http://localhost:5257/genres/get');
+        };
 
-    let ages = GetArrayByUrl('http://localhost:5257/agerestrictions/get');
+        fetchData();
+    }, []);
 
     const savePicture = (e) => {
         let file = e.files[0];
@@ -138,10 +221,50 @@ export default function ShowBookForm(){
         setImageFileName(file.name);
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if(!isNullOrUndef(cookies.BookEdit)) {
+                    setFlagEdit(true);
+                    setButtonName('Изменить');
+                    setHeaderName('Изменение');
+
+                    let book = cookies.BookEdit;
+
+                    await GetPubsByBook("id", book.id, setCookie);
+
+                    let curPubs = cookies.pubs.map((pub) => {
+                        return pub.idHouse
+                    });
+
+                    console.log(curPubs);
+                    let author = authors.find((author) => author.id === book.idAuthor);
+                    let genre = geners.find((gener) => gener.id === book.idGenre);
+                    let age = ages.find((age) => age.id === book.idAge);
+                    let pubsToSet = pubs.filter((pub) => curPubs.includes(pub.id));
+
+                    setTitle(book.title);
+                    setImageFileName(book.bookImage);
+                    setSelectedAuthor(author);
+                    setSelectedGenre(genre);
+                    setSelectedAge(age);
+                    setPrice(book.price);
+                    setYearCreation(book.creationYear);
+                    setDescription(book.bookDescription);
+                    setSelectedPubs(pubsToSet);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [authors]);
+
     return(
         <div className="flex flex-column justify-content-center mt-5">
 
-            <p className="text-4xl font-semibold mx-auto">Добавление новой книги</p>
+            <p className="text-4xl font-semibold mx-auto">{headerName} книги</p>
 
             <FloatLabel className="my-3 mx-auto">
                 <InputText value={title}
@@ -242,15 +365,17 @@ export default function ShowBookForm(){
                 <label htmlFor="ms-pubs" style={{fontSize: '12pt', marginTop: '-9px'}}>Издательства книги</label>
             </FloatLabel>
 
-            <Button label="Добавить"
+            <Button label={buttonName}
                     icon="pi pi-check"
                     className="my-3 mx-auto"
-                    onClick={() => {
+                    onClick={async () => {
                         if(title !== '' && imageFileName !== '' && !isNullOrUndef(selectedAuthor) &&
                             !isNullOrUndef(selectedGenre) && !isNullOrUndef(selectedAge) && price !== 0 &&
                             yearCreation !== 0 && description !== '' && selectedPubs.length > 0) {
-                            AddBook(title, imageFileName, selectedAuthor.id, selectedGenre.id, selectedAge.id, price, yearCreation, description, selectedPubs)
-                            navigate('/');
+                            await BookRequest(flagEdit ? cookies.BookEdit.id : 0, title, imageFileName, selectedAuthor.id,
+                                        selectedGenre.id, selectedAge.id, price, yearCreation, description, selectedPubs,
+                                        cookies.pubs, flagEdit);
+                            navigate('/adminbooks');
                         }
                         else
                             toast.current.show({

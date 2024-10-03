@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { DataView } from 'primereact/dataview';
 import {Toast} from "primereact/toast";
 import {PrintBookCard} from "../utils";
@@ -30,7 +30,11 @@ function ShowResults(){
         return <div className="grid grid-nogutter">{list}</div>;
     };
 
-    let rezBooks = JSON.parse(localStorage.getItem('books'));
+    const [rezBooks, setRezBooks] = useState([]);
+
+    useEffect(() => {
+        setRezBooks(JSON.parse(localStorage.getItem('books')));
+    }, []);
 
     // вывод сообщения в случае пустого результата
     useEffect(() => {

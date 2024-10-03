@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../index.css';
-import Flickity from "react-flickity-component";
+import { Carousel } from 'primereact/carousel';
 import {checkPatronymic, GetArrayByUrl, PostBooksWithHeaders, PrintBookCard} from "../utils";
 import {Tag} from 'primereact/tag';
 import {Rating} from "primereact/rating";
@@ -9,112 +9,103 @@ import {useNavigate} from "react-router-dom";
 
 
 const flickityOptions = {
-    initialIndex: 2,
-    wrapAround: true
-}
+    initialIndex: 0,
+    wrapAround: true,
+    autoPlay: true
+};
 
 // вывод книг в верхней части экрана
 // м.б. будут новинки
-function ShowUpperBooks() {
-    // получаем функцию присвоения книг в контекст
-    let books = JSON.parse(localStorage.getItem('books'));
-    // используется для redirect в коде
-    const navigate = useNavigate();
-
-    // получение книг с сервера
-    let booksUp = GetArrayByUrl('http://localhost:5257/books/get');
-
-
-    return (booksUp.slice(0, 5).map((book) => {
-            return (
-                <div className="book-cell">
-                    <div className="book-img">
-                        <img src={require('../img/books/' + book.bookImage)}
-                             alt={book.title}
-                             className="book-photo"/>
-                    </div>
-                    <div className="book-content">
-                        <div className="book-title">{book.title}</div>
-                        <div className="book-author">
-                            {book.idAuthorNavigation.surname} {book.idAuthorNavigation.firstName[0]}. {checkPatronymic(book.idAuthorNavigation.patronymic)}
-                        </div>
-                        <div className="genre-tag">
-                            <Tag severity="info" value={book.idGenreNavigation.genreName} rounded></Tag>
-                        </div>
-                        <div className="rate">
-                            <div className="stars">
-                                <Rating value={book.rating}
-                                        readOnly
-                                        cancel={false}
-                                        tooltip={"Текущая оценка: " + book.rating.toFixed(2)}
-                                        tooltipOptions={{ mouseTrack: true, style: {fontSize: 14} }}/>
-                            </div>
-                            <span className="book-voters">Оценок: {book.amountRatings} </span>
-                        </div>
-                        <div className="book-sum">
-                            {book.bookDescription}
-                        </div>
-                        <div className="book-see"
-                             onClick={() =>  {PostBooksWithHeaders("http://localhost:5257/books/search",
-                                                                   "id", book.id, navigate, '/book')}}>
-                            Подробнее
-                        </div>
-                    </div>
-                </div>
-            )
-        }
-    ))
-}
-
 // вывод карусели книг
 function MyCarousel() {
     // почему-то если убрать это Flickity перестаёт нормально работать
-    let books = GetArrayByUrl('http://localhost:5257/books/get');
+    const [books, setBooks] = useState([]);
+    // используется для redirect в коде
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let getBooks = await GetArrayByUrl('http://localhost:5257/books/get');
+                setBooks(getBooks.slice(0, 5));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+// Функция для рендеринга каждого элемента книги
+    const bookTemplate = (book) => {
+        const backgroundColor = book.id % 2 === 0 ? '#fbadaf' : '#cbb5e2'; // Чередуем цвета
+
+        return (
+            <div className="book-cell" key={book.id} style={{width: '680px', height: '350px', backgroundColor}}>
+                <div className="book-img">
+                    <img src={require('../img/books/' + book.bookImage)} alt={book.title} className="book-photo" />
+                </div>
+                <div className="book-content">
+                    <div className="book-title">{book.title}</div>
+                    <div className="book-author">
+                        {book.idAuthorNavigation.surname} {book.idAuthorNavigation.firstName[0]}. {checkPatronymic(book.idAuthorNavigation.patronymic)}
+                    </div>
+                    <div className="genre-tag">
+                        <Tag severity="info" value={book.idGenreNavigation.genreName} rounded></Tag>
+                    </div>
+                    <div className="rate">
+                        <div className="stars">
+                            <Rating value={book.rating}
+                                    readOnly
+                                    cancel={false}
+                                    tooltip={"Текущая оценка: " + book.rating.toFixed(2)}
+                                    tooltipOptions={{ mouseTrack: true, style: { fontSize: 14 } }} />
+                        </div>
+                        <span className="book-voters">Оценок: {book.amountRatings} </span>
+                    </div>
+                    <div className="book-sum">
+                        {book.bookDescription}
+                    </div>
+                    <div className="book-see"
+                         onClick={() => { PostBooksWithHeaders("http://localhost:5257/books/search", "id", book.id, navigate, '/book') }}>
+                        Подробнее
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="book-slide">
-            <Flickity
-                className={'book'} // default ''
-                elementType={'div'} // default 'div'
-                options={flickityOptions} // takes flickity options {}
-                disableImagesLoaded={false} // default false
-                reloadOnUpdate // default false
-                static // default false
-            >
-                <ShowUpperBooks/>
-            </Flickity>
+            <Carousel value={books}
+                      circular
+                      autoplayInterval={3000}
+                      itemTemplate={bookTemplate}
+                      numVisible={2}
+                      numScroll={1} />
         </div>
-    )
+    );
 }
-
-/*
-<fieldset className="rating yellow">
-    <input type="checkbox" id={"star" + (book.id * 5 + 5).toString()} name="rating"
-           value="5"/>
-    <label className="full" htmlFor={"star" + (book.id * 5 + 5).toString()}></label>
-    <input type="checkbox" id={"star" + (book.id * 5 + 4).toString()} name="rating"
-           value="4"/>
-    <label className="full" htmlFor={"star" + (book.id * 5 + 4).toString()}></label>
-    <input type="checkbox" id={"star" + (book.id * 5 + 3).toString()} name="rating"
-           value="3"/>
-    <label className="full" htmlFor={"star" + (book.id * 5 + 3).toString()}></label>
-    <input type="checkbox" id={"star" + (book.id * 5 + 2).toString()} name="rating"
-           value="2"/>
-    <label className="full" htmlFor={"star" + (book.id * 5 + 2).toString()}></label>
-    <input type="checkbox" id={"star" + (book.id * 5 + 1).toString()} name="rating"
-           value="1"/>
-    <label className="full" htmlFor={"star" + (book.id * 5 + 1).toString()}></label>
-</fieldset>
-*/
 
 // вывод популярных книг в определённом жанре или из всех жанров
 function ShowBooksByGenre() {
-    // получаем функцию присвоения книг в контекст
-    let books = JSON.parse(localStorage.getItem('books'));
     // используется для redirect в коде
     const navigate = useNavigate();
 
     // получение книг с сервера
-    const booksfor = GetArrayByUrl('http://localhost:5257/books/get');
+    const [booksfor, setBooksFor] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setBooksFor(await GetArrayByUrl('http://localhost:5257/books/get'));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // заполнение массива разметкой
     return (booksfor.map((book) =>
@@ -126,10 +117,22 @@ function ShowBooksByGenre() {
 
 // вывод популярных авторов этой недели
 function ShowWeekAuthors() {
-    let authors = GetArrayByUrl('http://localhost:5257/authors/popular');
+    const [authors, setAuthors] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setAuthors(await GetArrayByUrl('http://localhost:5257/authors/popular'));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // не выводим больше 5 авторов
-    if (authors.length > 5) authors = authors.slice(0, 5);
+    if (authors.length > 5) setAuthors(authors.slice(0, 5));
 
     // заполнение массива разметкой
     return (authors.map((author) => {
@@ -146,13 +149,22 @@ function ShowWeekAuthors() {
 
 // вывод книг популярных в этом году
 function ShowYearBooks() {
-    // получаем функцию присвоения книг в контекст
-    let books = JSON.parse(localStorage.getItem('books'));
     // используется для redirect в коде
     const navigate = useNavigate();
 
-    let booksPop = GetArrayByUrl('http://localhost:5257/books/popular').slice(0, 5);
+    const [booksPop, setBooksPop] = useState([]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let books = await GetArrayByUrl('http://localhost:5257/books/popular');
+                setBooksPop(books.slice(0, 5));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
 
     // заполнение массива разметкой
     return (booksPop.map((book) => {
@@ -226,9 +238,6 @@ export default function Home(){
                         <div className="genre">Подборки книг</div>
                         <div className="book-types">
                             <a href="#" className="book-type active">Все книги</a>
-                            <a href="#" className="book-type">Бестселлеры жанра</a>
-                            <a href="#" className="book-type">Набирающие популярность</a>
-                            <a href="#" className="book-type">Классика</a>
                         </div>
                     </div>
                     <div className="book-cards">

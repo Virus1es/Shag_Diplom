@@ -41,7 +41,7 @@ function SelectAmountSalesGeners(){
     const moment = require("moment");
 
     // пример получения текущей даты
-    let today = moment().format("YYYY-MM-DD");
+    const [today, setToday] = useState(moment().format("YYYY-MM-DD"));
 
     const [dateEnd, setDateEnd] = useState('');
     const [dateArea, setDateArea] = useState('week');
