@@ -17,11 +17,17 @@ public class ReportsController(BooksContext context) : Controller
     public JsonResult SelectSalesByDateArea([FromForm] DateTime dateStart, [FromForm] DateTime dateEnd) =>
         new(_db.Database.ExecuteSqlRaw($"exec SelectSalesByDateArea '{dateStart:yyyy-MM-dd}', '{dateEnd:yyyy-MM-dd}'"));
 
-    [HttpPost]
-    public JsonResult SelectAmountSalesGeners([FromForm] string dateStart, [FromForm] string dateEnd)
+    public class DateData
     {
-        DateTime start = DateTime.Parse(dateStart);
-        DateTime end = DateTime.Parse(dateEnd);
+        public string DateStart { get; set; }
+        public string DateEnd { get; set; }
+    }
+
+    [HttpPost]
+    public JsonResult SelectAmountSalesGeners([FromForm] DateData data)
+    {
+        DateTime start = DateTime.Parse(data.DateStart);
+        DateTime end = DateTime.Parse(data.DateEnd);
 
         return new(_db.Database.SqlQuery<SelectAmountSalesGeners>($"exec SelectAmountSalesGeners {end}, {start}")
                                .ToList());
