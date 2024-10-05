@@ -6,34 +6,32 @@ import {GetArrayByUrl} from "../utils";
 import {InputNumber} from "primereact/inputnumber";
 import {useNavigate} from "react-router-dom";
 import {useCookies} from "react-cookie";
+import moment from "moment/moment";
 
-function RequestData(requestUrl, dateStart, dateEnd, setFunc){
-    // XNLHttpRequest это и есть реализация AJAX в JavaScript
-    let request = new XMLHttpRequest();
+async function RequestData(requestUrl, dateStart, dateEnd) {
+    try {
+        const body = new FormData();
+        body.append("dateStart", dateStart);
+        body.append("dateEnd", dateEnd);
 
-    // настройка и отправка AJAX-запроса на сервер
-    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
-    // "http://localhost:5257/books/search"
-    request.open("POST", `http://localhost:5257/reports/${requestUrl}`);
+        const response = await fetch(`http://localhost:5257/reports/${requestUrl}`, {
+            method: 'POST',
+            body: body,
+        });
 
-    // передача на сервер в параметрах формы
-    let body = new FormData();
-    // body.append("username", 'username');
-    body.append("dateStart", dateStart);
-    body.append("dateEnd", dateEnd);
+        if (!response.ok) {
+            throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+        }
 
-    // callBack, работающий по окончании запроса
-    request.onload = function () {
-        // если запрос завершен и завершен корректно вывести полученные от сервера данные
-        if (request.status >= 200 && request.status <= 399) {
-            let text = request.responseText;
-            setFunc(JSON.parse(request.responseText));
-            console.log('Пришло: ' + text);
-        } // if
-    } // callBack
+        const text = await response.text();
+        const data = JSON.parse(text);
 
-    // собственно отправка запроса
-    request.send(body);
+        console.log('Пришло: ' + text);
+        return data; // Возвращаем данные
+    } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        return []; // Возвращаем пустой массив в случае ошибки
+    }
 }
 
 // вывод продаж по жанрам книг
@@ -50,9 +48,16 @@ function SelectAmountSalesGeners(){
     const [chartOptions, setChartOptions] = useState({});
 
     useEffect(() => {
-        if(dateEnd.length === 10) {
-            RequestData('SelectAmountSalesGeners', today, dateEnd, setResult);
-        }
+        const fetchData = async () => {
+            try {
+                const data = await RequestData('SelectAmountSalesGeners', today, dateEnd);
+                setResult(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        if(dateEnd.length === 10) fetchData();
     }, [dateEnd]);
 
     useEffect(() => {
@@ -172,10 +177,22 @@ function SelectAmountSalesGeners(){
 
 // вывод продаж за текущий год (количество и сумма проданных книг)
 function SelectSalesByCurYear() {
-    const result = GetArrayByUrl('http://localhost:5257/reports/SelectSalesByCurYear');
+    const [result, setResult] = useState([]);
     const [chartDataAmount, setChartDataAmount] = useState({});
     const [chartDataPrice, setChartDataPrice] = useState({});
     const [chartOptions, setChartOptions] = useState({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setResult(await GetArrayByUrl('http://localhost:5257/reports/SelectSalesByCurYear'));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const dataAmount = {
@@ -256,10 +273,22 @@ function SelectSalesByCurYear() {
 
 // вывод закупок за текущий год (количество и сумма проданных книг)
 function SelectPurchaseByCurYear() {
-    const result = GetArrayByUrl('http://localhost:5257/reports/SelectPurchaseByCurYear');
+    const [result, setResult] = useState([]);
     const [chartDataAmount, setChartDataAmount] = useState({});
     const [chartDataPrice, setChartDataPrice] = useState({});
     const [chartOptions, setChartOptions] = useState({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setResult(await GetArrayByUrl('http://localhost:5257/reports/SelectPurchaseByCurYear'));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const dataAmount = {

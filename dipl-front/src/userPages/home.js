@@ -2,17 +2,10 @@ import React, {useEffect, useState} from 'react';
 import '../index.css';
 import { Carousel } from 'primereact/carousel';
 import {checkPatronymic, GetArrayByUrl, PostBooksWithHeaders, PrintBookCard} from "../utils";
-import {Tag} from 'primereact/tag';
-import {Rating} from "primereact/rating";
+import { Tag } from 'primereact/tag';
+import { Rating } from "primereact/rating";
 import { Chip } from 'primereact/chip';
 import {useNavigate} from "react-router-dom";
-
-
-const flickityOptions = {
-    initialIndex: 0,
-    wrapAround: true,
-    autoPlay: true
-};
 
 // вывод книг в верхней части экрана
 // м.б. будут новинки
@@ -36,7 +29,7 @@ function MyCarousel() {
         fetchData();
     }, []);
 
-// Функция для рендеринга каждого элемента книги
+    // Функция для рендеринга каждого элемента книги
     const bookTemplate = (book) => {
         const backgroundColor = book.id % 2 === 0 ? '#fbadaf' : '#cbb5e2'; // Чередуем цвета
 
@@ -67,7 +60,10 @@ function MyCarousel() {
                         {book.bookDescription}
                     </div>
                     <div className="book-see"
-                         onClick={() => { PostBooksWithHeaders("http://localhost:5257/books/search", "id", book.id, navigate, '/book') }}>
+                         onClick={() => {
+                             PostBooksWithHeaders("http://localhost:5257/books/search", "id", book.id,
+                                                       navigate, '/book')
+                         }}>
                         Подробнее
                     </div>
                 </div>
@@ -189,25 +185,18 @@ function ShowYearBooks() {
     )
 }
 
-
 export function CatchUser(){
     // XNLHttpRequest это и есть реализация AJAX в JavaScript
     let request = new XMLHttpRequest();
 
     // настройка и отправка AJAX-запроса на сервер
-    // request.open("POST", `http://localhost:4242/people/post/${id}/${fullName}/${age}`);
-    // "http://localhost:5257/books/search"
     request.open("GET", 'http://localhost:5257/users/getuser');
-
-    // передача на сервер в параметрах формы
-    // let body = new FormData();
-    // body.append("username", 'username');
 
     // callBack, работающий по окончании запроса
     request.onload = function () {
         // если запрос завершен и завершен корректно вывести полученные от сервера данные
         if (request.status >= 200 && request.status <= 399) {
-            let text = JSON.parse(request.responseText);
+            JSON.parse(request.responseText);
         } // if
     } // callBack
 

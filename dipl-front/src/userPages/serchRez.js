@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { DataView } from 'primereact/dataview';
-import {Toast} from "primereact/toast";
+import { Toast } from "primereact/toast";
 import {PrintBookCard} from "../utils";
 import {useNavigate} from "react-router-dom";
 

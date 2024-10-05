@@ -9,6 +9,7 @@ import {Button} from "primereact/button";
 
 // вывод книг для редактирования
 export default function ShowBooksAdmin() {
+    // подключение к cookie
     const [cookies, setCookie, removeCookie] = useCookies(['currentUserRole', 'BookEdit']);
 
     // Получить текущее местоположение
@@ -49,13 +50,12 @@ export default function ShowBooksAdmin() {
             return fetch('http://localhost:5257/pubbooks/delete', {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(pId)
             }).then(response => {
-                if (!response.ok) {
+                if (!response.ok)
                     throw new Error('Network response was not ok ' + response.statusText);
-                }
                 return response.text();
             });
         });
@@ -73,9 +73,8 @@ export default function ShowBooksAdmin() {
                 body: JSON.stringify({ id: selectedBook.id })
             });
 
-            if (!response.ok) {
+            if (!response.ok)
                 throw new Error('Network response was not ok ' + response.statusText);
-            }
 
             // После успешного удаления обновляем список книг
             const updatedRezBooks = await GetArrayByUrl('http://localhost:5257/books/get');
@@ -99,7 +98,7 @@ export default function ShowBooksAdmin() {
         {
             label: 'Удалить',
             icon: 'pi pi-trash',
-            command: () => {deleteCom()}
+            command: deleteCom
         }
     ];
 

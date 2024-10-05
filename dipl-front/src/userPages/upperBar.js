@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {checkPatronymic, GetArrayByUrl, PostBooksWithHeaders} from "../utils";
+import {GetArrayByUrl, PostBooksWithHeaders} from "../utils";
 import {AutoComplete} from "primereact/autocomplete";
 import {isUndefined} from "swr/_internal";
 import {Sidebar} from "primereact/sidebar";
@@ -13,6 +13,7 @@ import {Divider} from "primereact/divider";
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import { confirmDialog } from 'primereact/confirmdialog';
 import {useCookies} from "react-cookie";
+import moment from "moment/moment";
 
 // вывод строки для поиска книг
 function ShowSearchField(){
@@ -31,7 +32,8 @@ function ShowSearchField(){
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setBooksName(await GetArrayByUrl('http://localhost:5257/books/get').map(item => item.title));
+                let books = await GetArrayByUrl('http://localhost:5257/books/get');
+                setBooksName(books.map(item => item.title));
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -43,8 +45,9 @@ function ShowSearchField(){
     // заполняем подсказки для пользователя (регистронезависимый и ищет все схождения в названии)
     const search = (event) => {
         setItems([...booksName.values()].filter(item => item.toString()
-            .toLowerCase()
-            .includes(event.query.toLowerCase())));
+                                                            .toLowerCase()
+                                                            .includes(event.query.toLowerCase()))
+        );
     };
 
     // передаём для отрисовки разметку
@@ -62,8 +65,7 @@ function ShowSearchField(){
                               if (e.key === 'Enter') {
                                   // ищем книги по названию
                                   PostBooksWithHeaders("http://localhost:5257/books/search",
-                                                 "title",
-                                                            value, navigate, '/booksearch');
+                                                 "title", value, navigate, '/booksearch');
                               }
                           }}
             />
@@ -75,8 +77,80 @@ function ShowSearchField(){
     )
 }
 
+
+async function RequestData(requestUrl, dateStart, dateEnd) {
+    try {
+        const body = new FormData();
+        body.append("dateStart", dateStart);
+        body.append("dateEnd", dateEnd);
+
+        const response = await fetch(`http://localhost:5257/reports/${requestUrl}`, {
+            method: 'POST',
+            body: body,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+        }
+
+        const text = await response.text();
+        const data = JSON.parse(text);
+
+        console.log('Пришло: ' + text);
+        return data; // Возвращаем данные
+    } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        return []; // Возвращаем пустой массив в случае ошибки
+    }
+}
+
 // вывод бокового меню
 function ShowMenu() {
+    // используется для redirect
+    const navigate = useNavigate();
+
+    const moment = require("moment");
+
+    // выбираемый жанр
+    const [selectedGener, setSelectedGener] = useState(null);
+
+    const [genersOption, setGenersOption] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const date = moment().subtract(1, "year");
+                const data = await RequestData('SelectAmountSalesGeners', moment().format("YYYY-MM-DD"), date.format("YYYY-MM-DD"));
+
+                // Устанавливаем genersOption на основе полученных данных
+                const options = data.map((genre) => {
+                    return {
+                        label: genre.genreName,
+                        command: () => { setSelectedGener(genre) }
+                    };
+                });
+                setGenersOption(options);
+
+                console.log('Пришло: ', data);
+                console.log('Options: ', options);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if(selectedGener !== null) {
+            setVisibleSlidebar(false);
+            console.log(selectedGener.genreName);
+            navigate('/');
+            PostBooksWithHeaders("http://localhost:5257/books/search", "genre", selectedGener.genreName,
+                navigate, '/booksearch');
+        }
+    }, [selectedGener]);
+
     // видимость бокового меню
     const [visible, setVisibleSlidebar] = useState(false);
 
@@ -98,29 +172,7 @@ function ShowMenu() {
             items: [
                 {
                     label: 'Популярные жанры',
-                    items: [
-                        {
-                            label: 'Ужасы',
-                            url: '#'
-                        },
-                        {
-                            label: 'Роман',
-                            command: () => {toast.current
-                                .show({ severity: 'success', summary: 'Успешно', detail: 'Выбор: роман', life: 3000 });
-                            }
-                        }
-                    ]
-                },
-                {
-                    label: 'Подборки',
-                    items: [
-                        {
-                            label: 'Бестселлеры жанра',
-                        },
-                        {
-                            label: 'Подборка редакции',
-                        }
-                    ]
+                    items: [...genersOption]
                 }
             ]
         },
@@ -237,7 +289,6 @@ export function LogoutUser(removeCookie){
         if (request.status >= 200 && request.status <= 399) {
             removeCookie('currentUser');
             removeCookie('currentUserRole');
-            console.log(request.responseText);
         } // if
     } // callBack
 
@@ -323,7 +374,6 @@ export default function ShowUpperBar(){
                     <ShowMenu/>
                 </div>
             </div>
-
             <ScrollTop />
         </div>
     );
