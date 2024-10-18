@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { DataView } from 'primereact/dataview';
 import { Toast } from "primereact/toast";
 import {PrintBookCard} from "../utils";
@@ -9,6 +9,8 @@ function ShowResults(){
     const navigate = useNavigate();
 
     const toast = useRef(null);
+
+    const [rezBooks, setRezBooks] = useState([]);
 
     // шаблоны вывода каждого элемента(книги)
     const itemTemplate = (book) => {
@@ -22,15 +24,12 @@ function ShowResults(){
     const listTemplate = (items) => {
         if (!items || items.length === 0) return null;
 
-
         let list = items.map((product) => {
             return itemTemplate(product);
         });
 
         return <div className="grid grid-nogutter">{list}</div>;
     };
-
-    const [rezBooks, setRezBooks] = useState([]);
 
     useEffect(() => {
         setRezBooks(JSON.parse(localStorage.getItem('books')));

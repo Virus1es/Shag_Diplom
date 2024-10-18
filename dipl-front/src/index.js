@@ -15,6 +15,7 @@ import ShowReports from "./emplPages/reports";
 import ShowBookForm from "./emplPages/addBooks";
 import ShowUsers from "./emplPages/users";
 import ShowBooksAdmin from "./emplPages/viewBooks";
+import ShowCart from "./userPages/cart";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -35,6 +36,7 @@ root.render(
             <Route path="/addbooks" element={<ShowBookForm/>} />
             <Route path="/users" element={<ShowUsers/>} />
             <Route path="/adminbooks" element={<ShowBooksAdmin/>} />
+            <Route path="/cart" element={<ShowCart/>} />
         </Routes>
     </BrowserRouter>
 );

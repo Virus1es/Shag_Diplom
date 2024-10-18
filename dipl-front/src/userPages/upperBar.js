@@ -10,10 +10,10 @@ import {Dropdown} from "primereact/dropdown";
 import {Avatar} from "primereact/avatar";
 import {ScrollTop} from "primereact/scrolltop";
 import {Divider} from "primereact/divider";
-import { ConfirmDialog } from 'primereact/confirmdialog';
-import { confirmDialog } from 'primereact/confirmdialog';
+import {ConfirmDialog, confirmDialog} from 'primereact/confirmdialog';
 import {useCookies} from "react-cookie";
-import moment from "moment/moment";
+import {Badge} from "primereact/badge";
+import {isNullOrUndef} from "chart.js/helpers";
 
 // вывод строки для поиска книг
 function ShowSearchField(){
@@ -53,7 +53,6 @@ function ShowSearchField(){
     // передаём для отрисовки разметку
     return (
         <span className="p-float-label search">
-
             <AutoComplete inputId="ac"
                           value={value}
                           suggestions={items}
@@ -63,6 +62,7 @@ function ShowSearchField(){
                           style={{fontSize: '11pt', height: '40px'}}
                           onKeyDown={(e) => {
                               if (e.key === 'Enter') {
+                                  navigate('/');
                                   // ищем книги по названию
                                   PostBooksWithHeaders("http://localhost:5257/books/search",
                                                  "title", value, navigate, '/booksearch');
@@ -76,7 +76,6 @@ function ShowSearchField(){
         </span>
     )
 }
-
 
 async function RequestData(requestUrl, dateStart, dateEnd) {
     try {
@@ -94,10 +93,7 @@ async function RequestData(requestUrl, dateStart, dateEnd) {
         }
 
         const text = await response.text();
-        const data = JSON.parse(text);
-
-        console.log('Пришло: ' + text);
-        return data; // Возвращаем данные
+        return JSON.parse(text); // Возвращаем данные
     } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
         return []; // Возвращаем пустой массив в случае ошибки
@@ -116,6 +112,8 @@ function ShowMenu() {
 
     const [genersOption, setGenersOption] = useState([]);
 
+    const cartBooks = JSON.parse(localStorage.getItem('cart')) || [];
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -130,9 +128,6 @@ function ShowMenu() {
                     };
                 });
                 setGenersOption(options);
-
-                console.log('Пришло: ', data);
-                console.log('Options: ', options);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -159,6 +154,14 @@ function ShowMenu() {
     // вывод уведомлений
     const toast = useRef(null);
 
+    const itemRenderer = (item, options) => (
+        <a className="flex align-items-center px-3 py-3 cursor-pointer" onClick={options.onClick}>
+            <span className={`${item.icon} text-primary`} />
+            <span className={`mx-2 ${item.items && 'font-semibold'}`}>{item.label}</span>
+            {!isNullOrUndef(item.badge) && <Badge className="ml-auto" value={item.badge} />}
+        </a>
+    );
+
     // выводимые значения бокового меню (названия, переходы и т.д.)
     const items = [
         {
@@ -179,14 +182,17 @@ function ShowMenu() {
         {
             label: 'Корзина',
             icon: 'pi pi-shopping-cart',
-            command: () => {toast.current
-                .show({ severity: 'info', summary: 'Упс :(', detail: 'Страница в разработке', life: 3000 });
-            }
+            badge: cartBooks.length,
+            template: itemRenderer,
+            url: '/cart'
         },
         {
             label: 'Закладки',
             icon: 'pi pi-bookmark',
-            command: () => {toast.current
+            badge: 0,
+            template: itemRenderer,
+            command: () => {
+                toast.current
                 .show({ severity: 'info', summary: 'Упс :(', detail: 'Страница в разработке', life: 3000 });
             }
         },
@@ -197,11 +203,19 @@ function ShowMenu() {
             items: [
                 {
                     label: 'Наши контакты',
-                    icon: 'pi pi-phone'
+                    icon: 'pi pi-phone',
+                    command: () => {
+                        toast.current
+                            .show({ severity: 'info', summary: 'Упс :(', detail: 'Страница в разработке', life: 3000 });
+                    }
                 },
                 {
                     label: 'Доставка',
-                    icon: 'pi pi-truck'
+                    icon: 'pi pi-truck',
+                    command: () => {
+                        toast.current
+                            .show({ severity: 'info', summary: 'Упс :(', detail: 'Страница в разработке', life: 3000 });
+                    }
                 },
                 {
                     label: 'Магазины',
@@ -241,6 +255,7 @@ function ShowMenu() {
         })
     }
 
+
     return (
         <>
             <Sidebar visible={visible}
@@ -270,6 +285,7 @@ function ShowMenu() {
     )
 }
 
+// выход из аккаунта пользователя
 export function LogoutUser(removeCookie){
     // XNLHttpRequest это и есть реализация AJAX в JavaScript
     let request = new XMLHttpRequest();
@@ -324,6 +340,7 @@ export default function ShowUpperBar(){
     // при изменении выбора жанра инициализируем поиск по этому жанру
     useEffect(() => {
         if(selectedGener !== null) {
+            navigate('/');
             PostBooksWithHeaders("http://localhost:5257/books/search", "genre", selectedGener.genreName,
                 navigate, '/booksearch');
         }

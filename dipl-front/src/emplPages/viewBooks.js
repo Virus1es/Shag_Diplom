@@ -6,6 +6,7 @@ import {Toast} from "primereact/toast";
 import {useCookies} from "react-cookie";
 import { ContextMenu } from 'primereact/contextmenu';
 import {Button} from "primereact/button";
+import { SplitButton } from 'primereact/splitbutton';
 
 // вывод книг для редактирования
 export default function ShowBooksAdmin() {
@@ -164,16 +165,34 @@ export default function ShowBooksAdmin() {
         }
     }, [rezBooks]);
 
+    const btnItems = [
+        {
+            label: 'Загрузить json',
+            icon: 'pi pi-code',
+            command: () => {
+                toast.current.show({ severity: 'success', summary: 'Загрузка json', detail: 'В разработке :)' });
+            }
+        },
+        {
+            label: 'Загрузить excel',
+            icon: 'pi pi-table',
+            command: () => {
+                toast.current.show({ severity: 'success', summary: 'Загрузка excel', detail: 'В разработке :)' });
+            }
+        }
+    ];
+
+
     // запрет доступа для не админа
     if (cookies.currentUserRole !== 'admin') navigate('/');
 
     return (
         <>
             <div className="flex justify-content-center">
-                <Button label="Добавить" icon="pi pi-plus" onClick={() => {
+                <SplitButton label="Добавить" icon="pi pi-plus" onClick={() => {
                     removeCookie('BookEdit');
                     navigate('/addbooks');
-                }}/>
+                }} model={btnItems}/>
             </div>
             <div className="card" style={{ margin: '50px 10px'}}>
                 <DataView value={rezBooks}

@@ -34,7 +34,7 @@ function MyCarousel() {
         const backgroundColor = book.id % 2 === 0 ? '#fbadaf' : '#cbb5e2'; // Чередуем цвета
 
         return (
-            <div className="book-cell" key={book.id} style={{width: '680px', height: '350px', backgroundColor}}>
+            <div className="book-cell" key={book.id} style={{width: '680px', height: '320px', backgroundColor}}>
                 <div className="book-img">
                     <img src={require('../img/books/' + book.bookImage)} alt={book.title} className="book-photo" />
                 </div>

@@ -113,8 +113,10 @@ export default function ShowLogin(){
                     icon="pi pi-sign-in"
                     className="my-2 mx-auto"
                     onClick={() => {
-                        if(login !== '' && password !== '')
-                            LoginUser(login, password, remember, toast, navigate, setCookie)
+                        if(login !== '' && password !== '') {
+                            LoginUser(login, password, remember, toast, navigate, setCookie);
+                            localStorage.removeItem('cart');
+                        }
                     }}
             />
 
