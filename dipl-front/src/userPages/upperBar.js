@@ -184,7 +184,10 @@ function ShowMenu() {
             icon: 'pi pi-shopping-cart',
             badge: cartBooks.length,
             template: itemRenderer,
-            url: '/cart'
+            command: () => {
+                setVisibleSlidebar(false);
+                navigate('/cart');
+            }
         },
         {
             label: 'Закладки',

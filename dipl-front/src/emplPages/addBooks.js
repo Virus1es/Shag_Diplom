@@ -181,7 +181,7 @@ export default function ShowBookForm(){
     // используется для redirect
     const navigate = useNavigate();
 
-    const [cookies, setCookie] = useCookies(['currentUserRole', 'BookEdit', 'pubs']);
+    const [cookies, setCookie] = useCookies(['currentUserRole', 'BookEdit']);
 
     if (cookies.currentUserRole !== 'admin') navigate('/');
 
@@ -216,12 +216,6 @@ export default function ShowBookForm(){
         fetchData();
     }, []);
 
-    const savePicture = (e) => {
-        let file = e.files[0];
-
-        setImageFileName(file.name);
-    }
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -238,7 +232,7 @@ export default function ShowBookForm(){
                         return pub.idHouse
                     });
 
-                    console.log(curPubs);
+                    console.log("1 раз");
                     let author = authors.find((author) => author.id === book.idAuthor);
                     let genre = geners.find((gener) => gener.id === book.idGenre);
                     let age = ages.find((age) => age.id === book.idAge);
@@ -261,6 +255,10 @@ export default function ShowBookForm(){
 
         fetchData();
     }, [authors]);
+
+    const savePicture = (e) => {
+        setImageFileName(e.files[0].name);
+    }
 
     return(
         <div className="flex flex-column justify-content-center mt-5">
