@@ -2,6 +2,9 @@
 using Dipl_Back.Models;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.EntityFrameworkCore;
+using Dipl_Back.Models.Dto.Procedures;
+using Dipl_Back.Models.Dto.Views;
 
 namespace Dipl_Back.Controllers;
 
@@ -22,7 +25,7 @@ public class PubBooksController(BooksContext context) : Controller
     public JsonResult SearchPubsById([FromForm] int id) => 
         new(_db.PubBooks.Where(p => p.IdBook == id).ToList());
 
-    // Определите класс для параметров
+    // класс для параметров
     public class PubBookData
     {
         public int IdBook { get; set; }
@@ -33,6 +36,11 @@ public class PubBooksController(BooksContext context) : Controller
     {
         public int Id {  get; set; }
     }
+
+    [HttpPost]
+    public JsonResult SearchByPubId([FromBody] PubBookEditData data) =>
+        new(_db.Database.SqlQuery<BooksWithFullPriceView>($"select * from BooksWithFullPriceView where Id = {data.Id}")
+                        .ToList().FirstOrDefault());
 
     // POST-запрос (модификация данных на сервере)
     [HttpPost]
