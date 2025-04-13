@@ -42,6 +42,14 @@ if OBJECT_ID('Purchases') is not null begin
 	print 'Удалена таблица Purchases';
 end;
 
+-- удалить старый вариант таблицы UserBookmarks(Книги сохранённые пользователями) и её индекса
+Drop index if exists IX_UserBookmarks_UserEmail ON UserBookmarks;
+
+if OBJECT_ID('UserBookmarks') is not null begin
+	drop table UserBookmarks;
+	print 'Удалена таблица UserBookmarks';
+end;
+
 -- удалить старый вариант таблицы PubBooks(Публикации книг)
 if OBJECT_ID('PubBooks') is not null begin
 	drop table PubBooks;
@@ -115,6 +123,7 @@ if object_id('Genres') is not null  or
    object_id('Stores') is not null or
    object_id('Books') is not null or
    object_id('PubBooks') is not null or
+   object_id('UserBookmarks') is not null or
    object_id('Purchases') is not null or
    object_id('Sales') is not null  begin  
    rollback transaction
@@ -238,6 +247,7 @@ create table Books (
 	 AmountRatings   int           not null,                 -- число проголосовавших
 	 Rating          float         not null,                 -- рейтинг
 	 BookDescription nvarchar(500) not null,                 -- красткое описание книги
+	 IsDeleted       bit           not null default 0,       -- удалена ли книга (мягкое удаление)
 
 	 -- Цена книги не может быть меньше 0
 	 constraint Books_Price_check check (Price > 0),
@@ -268,6 +278,21 @@ create table PubBooks (
 	 constraint FK_PubBooks_PublishingHouses foreign key(IdHouse) references dbo.PublishingHouses(Id)
 );
 go
+
+-- Таблица закладок (связывает пользователей и книги)
+CREATE TABLE UserBookmarks (
+    Id        INT NOT NULL IDENTITY(1,1) constraint UserBookmarks_PK primary key (Id), -- Уникальный идентификатор закладки
+    UserEmail nvarchar(255) NOT NULL,        -- Почта пользователя
+    IdBook    INT NOT NULL,                  -- Идентификатор книги
+
+	-- связь стаблицей Книги
+    CONSTRAINT FK_UserBookmarks_Books FOREIGN KEY(IdBook) REFERENCES dbo.Books(Id),
+	-- Запрещаем добавление одной и той же книги в закладки одним и тем же пользователем несколько раз.
+    CONSTRAINT UC_UserBookmarks UNIQUE (UserEmail, IdBook) 
+);
+
+-- Индекс для быстрого поиска закладок пользователя
+CREATE INDEX IX_UserBookmarks_UserEmail ON UserBookmarks(UserEmail);
 
 
 -- создание таблицы Закупки
@@ -327,6 +352,7 @@ if object_id('Genres') is null  or
    object_id('Stores') is null or
    object_id('Books') is null or
    object_id('PubBooks') is null or
+   object_id('UserBookmarks') is null or
    object_id('Purchases') is null or
    object_id('Sales') is null  begin  
    rollback transaction;
