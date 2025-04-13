@@ -1,60 +1,54 @@
-﻿using Dipl_Back.Models.Tables.Main;
-using Dipl_Back.Models.Tables.References;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Dipl_Back.Models.Tables.References;
+using Dipl_Back.Models.Tables.Main;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dipl_Back.Models;
 
-// класс описывающий базу данных
-// создан подходом Database First
-public partial class BooksContext : IdentityDbContext<IdentityUser>
+public partial class BooksContext : DbContext
 {
-    // конструктор контекста
-    public BooksContext() {}
+    public BooksContext()
+    {
+    }
 
-    // конструктор с параметром, испоьзуется в Program.cs
     public BooksContext(DbContextOptions<BooksContext> options)
         : base(options)
-    {}
+    {
+    }
 
-    #region Таблицы базы данных
+    #region Таблицы БД
+    public virtual DbSet<AgeRestriction> AgeRestrictions { get; set; }
 
-    public DbSet<AgeRestriction> AgeRestrictions { get; set; }
+    public virtual DbSet<Author> Authors { get; set; }
 
-    public DbSet<Author> Authors { get; set; }
+    public virtual DbSet<Book> Books { get; set; }
 
-    public DbSet<Book> Books { get; set; }
+    public virtual DbSet<City> Cities { get; set; }
 
-    public DbSet<City> Cities { get; set; }
+    public virtual DbSet<Genre> Genres { get; set; }
 
-    public DbSet<Genre> Genres { get; set; }
+    public virtual DbSet<Provider> Providers { get; set; }
 
-    public DbSet<Provider> Providers { get; set; }
+    public virtual DbSet<PubBook> PubBooks { get; set; }
 
-    public DbSet<PubBook> PubBooks { get; set; }
+    public virtual DbSet<PublishingHouse> PublishingHouses { get; set; }
 
-    public DbSet<PublishingHouse> PublishingHouses { get; set; }
+    public virtual DbSet<Purchase> Purchases { get; set; }
 
-    public DbSet<Purchase> Purchases { get; set; }
+    public virtual DbSet<Sale> Sales { get; set; }
 
-    public DbSet<Sale> Sales { get; set; }
+    public virtual DbSet<Store> Stores { get; set; }
 
-    public DbSet<Store> Stores { get; set; }
+    public virtual DbSet<Street> Streets { get; set; }
 
-    public DbSet<Street> Streets { get; set; }
-
+    public virtual DbSet<UserBookmark> UserBookmarks { get; set; }
     #endregion
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=DESKTOP-N88PL21;Database=Diploming_DB;Trusted_Connection=True;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False;");
 
-    // настройка модели на стадии создания
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-
         modelBuilder.Entity<AgeRestriction>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("AgeRestrictions_PK");
@@ -75,11 +69,9 @@ public partial class BooksContext : IdentityDbContext<IdentityUser>
         {
             entity.HasKey(e => e.Id).HasName("Books_PK");
 
-            entity.Property(e => e.Title).HasMaxLength(100);
-
-            entity.Property(e => e.BookImage).HasMaxLength(255);
-
             entity.Property(e => e.BookDescription).HasMaxLength(500);
+            entity.Property(e => e.BookImage).HasMaxLength(255);
+            entity.Property(e => e.Title).HasMaxLength(100);
 
             entity.HasOne(d => d.IdAgeNavigation).WithMany(p => p.Books)
                 .HasForeignKey(d => d.IdAge)
@@ -190,6 +182,22 @@ public partial class BooksContext : IdentityDbContext<IdentityUser>
             entity.HasKey(e => e.Id).HasName("Streets_PK");
 
             entity.Property(e => e.StreetName).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<UserBookmark>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("UserBookmarks_PK");
+
+            entity.HasIndex(e => e.UserEmail, "IX_UserBookmarks_UserEmail");
+
+            entity.HasIndex(e => new { e.UserEmail, e.IdBook }, "UC_UserBookmarks").IsUnique();
+
+            entity.Property(e => e.UserEmail).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdBookNavigation).WithMany(p => p.UserBookmarks)
+                .HasForeignKey(d => d.IdBook)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserBookmarks_Books");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -23,8 +23,8 @@ public class UsersController : Controller
 
 
     // создаем две роли
-    private readonly IdentityRole role1 = new IdentityRole { Name = "admin" };
-    private readonly IdentityRole role2 = new IdentityRole { Name = "user" };
+    private readonly IdentityRole role1 = new() { Name = "admin" };
+    private readonly IdentityRole role2 = new() { Name = "user" };
 
     public UsersController(UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,

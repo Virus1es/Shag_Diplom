@@ -52,7 +52,10 @@ public partial class Book
 
     // настройка внешних ключей для таблиц, которые связываются с таблей Книги
     [JsonIgnore]
-    public virtual ICollection<PubBook> PubBooks { get; set; } = new List<PubBook>();
+    public virtual ICollection<UserBookmark> UserBookmarks { get; set; } = [];
+
+    [JsonIgnore]
+    public virtual ICollection<PubBook> PubBooks { get; set; } = [];
 
     #endregion
 }
