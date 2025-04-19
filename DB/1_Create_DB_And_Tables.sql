@@ -246,8 +246,8 @@ create table Books (
 	 CreationYear    int           not null,                 -- год написания
 	 AmountRatings   int           not null,                 -- число проголосовавших
 	 Rating          float         not null,                 -- рейтинг
-	 BookDescription nvarchar(500) not null,                 -- красткое описание книги
-	 IsDeleted       bit           not null default 0,       -- удалена ли книга (мягкое удаление)
+	 BookDescription nvarchar(500) not null,                 -- краткое описание книги
+	 IsDelete        bit           not null default 0,       -- удалена ли книга (мягкое удаление)
 
 	 -- Цена книги не может быть меньше 0
 	 constraint Books_Price_check check (Price > 0),
@@ -300,9 +300,9 @@ create table Purchases (
      Id            int  not null identity(1, 1) constraint Purchases_PK primary key (Id), -- для автоинкремента
 	 IdProvider    int  not null,         -- поставщик, у которого закупили книги
 	 IdPubBook     int  not null,         -- какие книги закупили
-	 PurchaseDate  date not null,         -- цена закупки
+	 PurchaseDate  date not null,         -- дата закупки
 	 Amount        int  not null,         -- количество закупленных книг
-	 PurchasePrice int  not null,         -- дата закупки
+	 PurchasePrice int  not null,         -- цена закупки
 	 
 	 -- дата закупки не может быть больше текущей
 	 constraint Purchases_PurchaseDate_check check (PurchaseDate < getdate()),	 

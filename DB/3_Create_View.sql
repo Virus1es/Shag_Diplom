@@ -19,7 +19,7 @@ select
 	, Books.AmountRatings
 	, Books.Rating
 	, Books.BookDescription
-from dbo.Books where Books.IsDeleted = 0;
+from dbo.Books where Books.IsDelete = 0;
 go
 
 -- создание представления Книги на складе
