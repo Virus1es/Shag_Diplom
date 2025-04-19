@@ -26,7 +26,8 @@ builder.Services.AddDbContext<BooksContext>(
 //builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
 //                .AddEntityFrameworkStores<BooksContext>();
 builder.Services.AddIdentityCore<IdentityUser>(
-    options => {
+    options =>
+    {
         options.SignIn.RequireConfirmedAccount = false;
         options.User.RequireUniqueEmail = true;
         options.Password.RequireDigit = false;

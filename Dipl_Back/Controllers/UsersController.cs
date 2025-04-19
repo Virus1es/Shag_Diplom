@@ -21,11 +21,6 @@ public class UsersController : Controller
     private readonly ILogger<UsersController> _logger;
     private readonly IEmailSender _emailSender;
 
-
-    // создаем две роли
-    private readonly IdentityRole role1 = new() { Name = "admin" };
-    private readonly IdentityRole role2 = new() { Name = "user" };
-
     public UsersController(UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IUserStore<IdentityUser> userStore,
@@ -40,6 +35,8 @@ public class UsersController : Controller
         _signInManager = signInManager;
         _logger = logger;
         _emailSender = emailSender;
+
+        // _ = InitializeAdmin();
     }
 
     public IList<AuthenticationScheme> ExternalLogins { get; set; }
@@ -95,6 +92,20 @@ public class UsersController : Controller
     [HttpPost]
     public async Task<string> RegisterAsync([FromForm] string username, [FromForm] string email, [FromForm] string password)
     {
+        // Проверяем, существует ли роль "user"
+        if (!await _roleManager.RoleExistsAsync("user"))
+        {
+            // Если нет — создаём
+            await _roleManager.CreateAsync(new IdentityRole("user"));
+        }
+
+        // Проверяем, существует ли роль "admin"
+        if (!await _roleManager.RoleExistsAsync("admin"))
+        {
+            // Если нет — создаём
+            await _roleManager.CreateAsync(new IdentityRole("admin"));
+        }
+
         StringBuilder sb = new("Errors: ");
 
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -116,7 +127,7 @@ public class UsersController : Controller
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
-                await _userManager.AddToRoleAsync(user, "user");
+                await _userManager.AddToRoleAsync(user, "admin");
                 return $"Аккаунт успешно создан {username}; {email}; {password}";
             }
             foreach (var error in result.Errors)

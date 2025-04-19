@@ -1,10 +1,12 @@
 ﻿using Dipl_Back.Models.Tables.References;
 using Dipl_Back.Models.Tables.Main;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Dipl_Back.Models;
 
-public partial class BooksContext : DbContext
+public partial class BooksContext : IdentityDbContext<IdentityUser>
 {
     public BooksContext()
     {
@@ -49,6 +51,8 @@ public partial class BooksContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<AgeRestriction>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("AgeRestrictions_PK");

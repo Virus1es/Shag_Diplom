@@ -36,8 +36,11 @@ public partial class Book
     // рейтинг книги
     public double Rating { get; set; }
 
-    // красткое описание книги
+    // краткое описание книги
     public string BookDescription { get; set; } = null!;
+
+    // удалена ли книга
+    public bool IsDelete { get; set; }
 
     #region Настройка внешних ключей
 
